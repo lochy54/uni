@@ -1,0 +1,40 @@
+body{
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button{
+    border-radius: 2vh;
+    border-style: solid;
+    border-color: white;
+    color: #8a2be2;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: #8a2be2;
+    color: white;
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+button:disabled {
+    background-color: #d3d3d3; 
+    color: #a9a9a9; 
+    border-color: #d3d3d3;
+    cursor: not-allowed; 
+    transform: none; 
+    transition: none; 
+}
+
+input[type="text"] , input[type="password"], input[type="number"]{
+    border-radius: 2vh;
+    border-style: solid;
+    border-color: white;
+    color: #8a2be2;
+    padding: 1vh;
+}

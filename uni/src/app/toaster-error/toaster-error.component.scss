@@ -1,0 +1,17 @@
+.error-container{
+    position: absolute;
+    top: 10vh;
+    right: 5vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.error-msg{
+    align-self: center;
+    border-radius: 2vh;
+    background-color: red;
+    color: white;
+    padding: 1vh;
+    font-size: large;
+}
