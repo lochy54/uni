@@ -10,7 +10,7 @@ import { ErrorServiceService } from '../../service/error-service.service';
 })
 export class ToasterErrorComponent {
   errorList = computed<string[]>(()=>{
-    return this.errorService.errorS
+    return this.errorService.errorS()
   })
   constructor(private errorService : ErrorServiceService){}
 }

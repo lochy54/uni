@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { ErrorServiceService } from './error-service.service';
-import { ApiServiceService, login } from './api-service.service';
+import { ApiServiceService, login, user } from './api-service.service';
+import { catchError, map, of, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,9 @@ import { ApiServiceService, login } from './api-service.service';
 
 
 export class OuthServiceService {
-  private _username = signal<string | undefined>(undefined);
-
+  private _username = signal<{username : string, token : string} | undefined>(undefined);
   public get username() {
-    return this._username();
+    return this._username.asReadonly();
   }
 
   
@@ -21,41 +21,60 @@ export class OuthServiceService {
     if(token){
       this.apiService.chekToken(token).subscribe({
         next : (value) => {
-          this._username.set(value)
+          this._username.set({
+            username: value,
+            token: token
+          })
         },error : (err) =>  {
-          this.errorService.setError(err)
+          this.errorService.setError("Login Spoiled")
         }
        })
     }
   }
+
 
   logOut(){
-    const credential = localStorage.getItem("token")
-    if(!credential){
-      this.errorService.setError("not loged in")
-    }else{
-      this.apiService.logout(credential).subscribe({
-        next:(_)=> {
+      this.apiService.logout(this._username()!.token).pipe(
+        tap( _ => {
           localStorage.removeItem("token")
           this._username.set(undefined)
-        },error:(err)=> {
-          this.errorService.setError(err)
-        }
-       })
+        }),
+        catchError(err => {
+          return throwError(() => err.message); 
+        })
+      );
 
-    }
+}
+
+
+  login(l: login) {
+    return this.apiService.login(l).pipe(
+      tap(value => {
+        localStorage.setItem("token", value);
+        this._username.set({
+          username: l.username,
+          token: value
+        });
+      }),
+      catchError(err => {
+        return throwError(() => err.message); 
+      })
+    );
   }
 
-
-  login(l : login){
-     this.apiService.login(l).subscribe({
-      next:(value)=> {
-          localStorage.setItem("token",value)
-          this._username.set(l.username)
-      },error:(err)=> {
-        this.errorService.setError(err)
-      }
-     })
+  register(u:user) {
+    return this.apiService.register(u).pipe(
+      tap(value => {
+        localStorage.setItem("token", value);
+        this._username.set({
+          username: u.username,
+          token: value
+        });
+      }),
+      catchError(err => {
+        return throwError(() => err.message); 
+      })
+    );
   }
 
 }

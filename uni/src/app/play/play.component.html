@@ -1,0 +1,39 @@
+<div class="main-login-container">
+    <div class="close-container" style="flex-direction: row !important;" [style]="!playOpen()? 'border-radius : 2vh': ''">
+        <span class="material-symbols-outlined" (click)="playOpen.set(!playOpen())">
+            sports_esports
+            </span>
+        @if(!playOpen()){
+        <h2>Tap to play</h2>
+        }
+    </div>
+    @if(playOpen()){
+    <div class="open-container">
+                <h2>Play</h2>
+        <form [formGroup]="playForm">
+            <div class="input-container">
+                <label for="code">Enter your code</label>
+                <input type="text" id="code" formControlName="code" placeholder="Enter your code" />
+                @if(playForm.get('code')?.invalid && playForm.get('code')?.touched){
+                @if(playForm.get('code')?.hasError('required')){
+                <small>code is required</small>
+                }
+                @if(playForm.get('code')?.hasError('minlength')){
+                <small>min lenght 6</small>
+                }
+                @if(playForm.get('code')?.hasError('maxlength')){
+                    <small>max lenght 6</small>
+                }
+                }
+            </div>
+            @if(!loading()){
+                <button  [disabled]="playForm.invalid" (click)="play()">Play</button>
+            }@else {
+                <div class="spinner"></div>
+            }
+        </form>
+    </div>
+}
+</div>
+
+

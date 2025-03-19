@@ -1,0 +1,22 @@
+
+<app-toaster-error></app-toaster-error>
+<div class="header">
+    <img src="logo.png" class="logo">
+</div>
+
+<div class="main-container">
+
+    @if(!username()){
+        <div class="login-container">
+            <app-login></app-login>
+            <app-play></app-play>
+
+        </div>
+    }@else {
+        <app-main-menu></app-main-menu>
+    }
+    
+
+
+</div>
+<div class="footer"></div>

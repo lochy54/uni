@@ -10,14 +10,12 @@ export interface login {
 export interface user {
 	name   :  string
 	surname : string 
-	age   :   number
-	cf    :   string 
 	username : string 
 	password : string 
 }
 
 
-const apiUrl = "localhost//"
+const apiUrl = "http://localhost:8080"
 
 @Injectable({
   providedIn: 'root'
@@ -27,19 +25,26 @@ export class ApiServiceService {
   constructor(private http : HttpClient) { }
 
   login(l : login) : Observable<string>{
-    return this.http.post<string>(`${apiUrl}login`, JSON.stringify(l));
+    return this.http.post<string>(`${apiUrl}/login`, JSON.stringify(l));
   }
 
   chekToken(token : string) : Observable<string> {
-    return this.http.post<string>(`${apiUrl}chekToken`, JSON.stringify(token));
+    return this.http.post<string>(`${apiUrl}/chekToken`, JSON.stringify(token));
   }
 
   logout(token: string) : Observable<any> {
-    return this.http.post<any>(`${apiUrl}logout`, JSON.stringify(token)); 
+    return this.http.post<any>(`${apiUrl}/logout`, JSON.stringify(token)); 
   }
 
   register(user : user) : Observable<string> {
-    return this.http.post<string>(`${apiUrl}register`, JSON.stringify(user)); 
+    return this.http.post<string>(`${apiUrl}/register`, JSON.stringify(user)); 
   }
 
+  generateCode(token : string) : Observable<string> {
+    return this.http.post<string>(`${apiUrl}/generate`, JSON.stringify(token)); 
+  }
+  isCodeActive(code : string) : Observable<any> {
+    return this.http.post<any>(`${apiUrl}/chekCode`, JSON.stringify(code)); 
+  }
+  
 }

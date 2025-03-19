@@ -1,10 +1,14 @@
 .error-container{
     position: absolute;
-    top: 10vh;
-    right: 5vw;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    top: 2vh;
+    align-self: center;
     display: flex;
     flex-direction: column;
     gap: 2vh;
+    z-index: 100;
 }
 
 .error-msg{

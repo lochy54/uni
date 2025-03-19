@@ -1,11 +1,5 @@
 
-.main-login-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 10vh;
-    margin-bottom: 10vh;
-}
+
 
 .left-open-container, .right-open-container, .left-close-container, .right-close-container {
     box-shadow: 1vh 1vh 3vh #b96eff;
@@ -21,7 +15,7 @@
 }   
 
 .left-open-container, .right-open-container{
-    min-width: 20%;
+    min-width: 30vw;
 }
 
 
@@ -55,27 +49,8 @@
 
 
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2vh;
-}
 
-.input-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1vh;
-}
 
-small {
-    font-size: small !important;
-    color: red !important;
-}
-
-h2 {
-    padding: 0%;
-    margin: 0%;
-}
 
 .switchLogin{
     align-self: center;
@@ -87,3 +62,4 @@ h2 {
     transform: scale(1.1);
     transition: transform 0.3s ease;
 }
+

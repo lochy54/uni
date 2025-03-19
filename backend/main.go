@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
 	"progettoUni.com/mongo"
+	"progettoUni.com/token"
 )
 
-var Conn = mongo.CreateCLient("mongodb://localhost:27017","uniGame")
-
+var Conn = mongo.CreateCLient("mongodb://localhost:27017", "uniGame")
+var Maps = token.CreateMaps()
 
 func main() {
 	app := iris.New()
@@ -21,6 +22,7 @@ func main() {
 	}).ServeHTTP
 
 	err := Conn.Connect()
+	Maps.Check()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,6 +33,9 @@ func main() {
 	app.Post("/logout", logout)
 	app.Post("/chekToken", chekToken)
 	app.Post("/register", register)
+	app.Post("/generate", generateCode)
+	app.Post("/chekCode", chekCode)
+
 	app.Listen("0.0.0.0:8080")
 }
 
@@ -38,13 +43,19 @@ func register(ctx iris.Context) {
 	var user mongo.User
 	if err := ctx.ReadJSON(&user); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
-	err,token := Conn.Register(user)
+	err := Conn.Register(user)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
+		return
+	}
+	err, token := Maps.GenerateToken(user.Username)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -55,13 +66,13 @@ func chekToken(ctx iris.Context) {
 	var t string
 	if err := ctx.ReadJSON(&t); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
-	err,user := Conn.RefreshToken(t);
-	if  err != nil {
+	err, user := Maps.RefreshToken(t)
+	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -72,32 +83,77 @@ func login(ctx iris.Context) {
 	var l mongo.Login
 	if err := ctx.ReadJSON(&l); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
-	err,token := Conn.Login(l)
-	if  err != nil {
+
+	if err := Conn.Login(l); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
+		return
+	}
+	err, token := Maps.GenerateToken(l.Username)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(token)
 }
 
-
 func logout(ctx iris.Context) {
 	var t string
 	if err := ctx.ReadJSON(&t); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
-	if err:=Conn.Logout(t); err!=nil {
+	if err := Maps.DeleteToken(t); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err)
+		ctx.JSON(err.Error())
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
 }
 
+func generateCode(ctx iris.Context) {
+	var t string
+	if err := ctx.ReadJSON(&t); err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	err, username := Maps.RefreshToken(t)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	err, code := Maps.GenerateCode(username)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.StatusCode(iris.StatusOK)
+	ctx.JSON(code)
+}
+
+func chekCode(ctx iris.Context) {
+	var c string
+	if err := ctx.ReadJSON(&c); err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	if err:= Maps.IsCodeActive(c); err!= nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.StatusCode(iris.StatusOK)
+}
+
+
+//da fare parte gestione codici (tap to play invio) e inizio gioco inserimento username e connessione pluethho

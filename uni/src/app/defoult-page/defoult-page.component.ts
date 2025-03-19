@@ -1,0 +1,23 @@
+import { Component, computed } from '@angular/core';
+import { OuthServiceService } from '../../service/outh-service.service';
+import { LoginComponent } from '../login/login.component';
+import { MainMenuComponent } from '../main-menu/main-menu.component';
+import { PlayComponent } from '../play/play.component';
+import { ToasterErrorComponent } from '../toaster-error/toaster-error.component';
+
+@Component({
+  selector: 'app-defoult-page',
+  standalone: true,
+  imports: [ToasterErrorComponent, LoginComponent, PlayComponent, MainMenuComponent],
+  templateUrl: './defoult-page.component.html',
+  styleUrl: './defoult-page.component.scss'
+})
+export class DefoultPageComponent {
+  username = computed<{
+    username: string;
+    token: string;
+} | undefined>(()=> this.outhService.username())
+  constructor(private outhService : OuthServiceService){
+  }
+  
+}

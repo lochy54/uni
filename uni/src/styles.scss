@@ -7,7 +7,15 @@ body{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+.main-login-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 button{
+    padding: 1vh;
     border-radius: 2vh;
     border-style: solid;
     border-color: white;
@@ -37,4 +45,80 @@ input[type="text"] , input[type="password"], input[type="number"]{
     border-color: white;
     color: #8a2be2;
     padding: 1vh;
+}
+
+input[type="checkbox"] {
+    width: 1rem;  
+    height: 100%;
+    accent-color: #8a2be2;
+    cursor: pointer;
+}
+
+
+.material-symbols-outlined{
+    align-self: center;
+    cursor: pointer;
+    font-size: xx-large;
+}
+
+.material-symbols-outlined:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+
+
+small {
+    font-size: small !important;
+    color: red !important;
+}
+
+h2 {
+    padding: 0%;
+    margin: 0%;
+}
+
+
+a{
+    color: white;
+}
+
+
+.spinner {
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .input-chekbox{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

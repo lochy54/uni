@@ -7,12 +7,11 @@ export class ErrorServiceService {
   private _errorS = signal<string[]>([]);
 
   public get errorS() {
-    return this._errorS();
+    return this._errorS.asReadonly();
   }
 
 
   setError(errorString: string){
-    console.log(errorString)
     this._errorS.update(val=>{
      val.push(errorString)
       return val
