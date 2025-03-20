@@ -1,52 +1,67 @@
-import { Injectable, signal } from '@angular/core';
-import { ErrorServiceService } from './error-service.service';
+import { computed, Injectable, signal } from '@angular/core';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BleServiceService {
-  private sensitivityCharacteristic: BluetoothRemoteGATTCharacteristic | undefined;
-  private pressionCharacteristic: BluetoothRemoteGATTCharacteristic | undefined;
+  private readonly PRESSION_SERVICE_UUID = '19b10030-e8f2-537e-4f6c-d104768a1214';
+  private readonly PRESSION_CHAR_UUID = '19b10031-e8f2-537e-4f6c-d104768a1214';
 
-  private SENSITIVITY_SERVICE_UUID = '19b10020-e8f2-537e-4f6c-d104768a1214';
-  private PRESSION_SERVICE_UUID = '19b10030-e8f2-537e-4f6c-d104768a1214';
-  private SENSITIVITY_CHAR_UUID = '19b10021-e8f2-537e-4f6c-d104768a1214';
-  private PRESSION_CHAR_UUID = '19b10031-e8f2-537e-4f6c-d104768a1214';
-  
+  private _pressureSignal = signal<number | undefined>(undefined);
 
-  constructor(private errorService : ErrorServiceService) {}
-
-  private _isConnected = signal<boolean>(false);
-  public get isConnected() {
-    return this._isConnected();
+  public get pressureSignal() {
+    return this._pressureSignal.asReadonly();
   }
-  async connect(): Promise<void> {
+
+  private characteristic: BluetoothRemoteGATTCharacteristic | undefined = undefined;
+
+  constructor() {}
+
+  connect(): Observable<void> {
+    return from(this._connect());
+  }
+
+  private async _connect(): Promise<void> {
     try {
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
-        optionalServices: [this.SENSITIVITY_SERVICE_UUID, this.PRESSION_SERVICE_UUID],
+        optionalServices: [this.PRESSION_SERVICE_UUID],
       });
+      device.addEventListener('gattserverdisconnected', this.onDisconnected.bind(this));
 
       const server = await device.gatt?.connect();
-
       if (!server) {
-        this.errorService.setError("server setup error")
-        return
+        throw new Error('Server setup error');
       }
-
-      const service = await server.getPrimaryService(this.SENSITIVITY_SERVICE_UUID);
-      this.sensitivityCharacteristic = await service.getCharacteristic(this.SENSITIVITY_CHAR_UUID);
-
       const pressionService = await server.getPrimaryService(this.PRESSION_SERVICE_UUID);
-      this.pressionCharacteristic = await pressionService.getCharacteristic(this.PRESSION_CHAR_UUID);
+      this.characteristic = await pressionService.getCharacteristic(this.PRESSION_CHAR_UUID);
+      await this.characteristic.startNotifications();
+      this.characteristic.addEventListener('characteristicvaluechanged', this.onPressureChanged.bind(this));
 
-      this._isConnected.set(true)
     } catch (error) {
-      this.errorService.setError('BLE Connection Error:'+ error)
+      throw error;
     }
   }
 
+  private onPressureChanged(event: Event) {
+    if (this.characteristic) {
+      const value = this.characteristic.value;
+      if (value) {
+        const pressure = this.convertPressure(value);
+        this._pressureSignal.set(pressure);
+      }
+    }
+  }
+
+  private convertPressure(value: DataView): number {
+    return value.getUint16(0, /* littleEndian = */ true);
+  }
+
+
+  private onDisconnected() {
+    this._pressureSignal.set(undefined);  
+    this.characteristic = undefined;  
 }
 
-
-
+}

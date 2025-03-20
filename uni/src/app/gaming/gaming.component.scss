@@ -1,0 +1,35 @@
+.game{
+    border-radius: 2vh;
+    margin-left: 5vw;
+    width: 90vw;
+    height: 75vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 1vh 1vh 3vh #b96eff;
+    color: white;
+    background: linear-gradient(135deg, 
+    #2f00ff,  /* Base Blue Violet */
+    #ff0000,  /* Slightly Darker */
+    #6900C0,  /* Deep Purple */
+    #ff0000,  /* Slightly Darker */
+    #2f00ff,  /* Base Blue Violet */
+);
+background-size: 500% 500%;
+animation: gradientAnimation 8s ease-in-out infinite alternate;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 0%; filter: brightness(1.1); }
+    50% { background-position: 100% 100%; filter: brightness(0.9); }
+    100% { background-position: 0% 0%; filter: brightness(1.1); }
+}
+
+
+
+.game-screen{
+    width: 89vw;
+    height: 73vh;
+    background-color: rgba(0, 0, 0, 0.788);
+    border-radius: 2vh;
+}

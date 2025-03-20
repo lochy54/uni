@@ -1,0 +1,33 @@
+
+
+<div class="main-ble-container">
+    <div class="open-container">
+                <h2>Before Play</h2>
+        <form [formGroup]="bleForm">
+            <div class="input-container">
+                <label for="username">Enter your username</label>
+                <input type="text" id="username" formControlName="username" placeholder="Enter your username" />
+                @if(bleForm.get('username')?.invalid && bleForm.get('username')?.touched){
+                @if(bleForm.get('username')?.hasError('required')){
+                <small>username is required</small>
+                }
+                @if(bleForm.get('username')?.hasError('minlength')){
+                <small>min lenght 3</small>
+                }
+                @if(bleForm.get('username')?.hasError('maxlength')){
+                    <small>max lenght 20</small>
+                }
+                }
+            </div>
+            <div class="input-container">
+                <button (click)="connect()">Connect to a device</button>
+                @if(bleForm.get('connected')?.invalid && bleForm.get('connected')?.value != undefined){
+                <small>non connesso</small>
+                }
+            </div>
+                <button  [disabled]="bleForm.invalid" (click)="start()">Play</button>
+        </form>
+    </div>
+</div>
+
+

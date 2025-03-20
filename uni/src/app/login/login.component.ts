@@ -24,7 +24,6 @@ export class LoginComponent {
               private fb: FormBuilder,
               private errorService: ErrorServiceService
   ){
-
     this.loginForm = this.fb.nonNullable.group({
       username: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(6)]]

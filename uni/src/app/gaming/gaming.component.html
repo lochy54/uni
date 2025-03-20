@@ -1,5 +1,35 @@
-<div class="main-screen">
-    <app-toaster-error></app-toaster-error>
-    <app-ble-selector></app-ble-selector>
-    
+
+
+
+<app-toaster-error></app-toaster-error>
+<app-header></app-header>
+
+<div class="main-container">
+    <div class="game">
+        <div class="game-screen">
+
+
+            @if(username()&&pression()){
+                   <div class="game-select">
+                        @for (item of gameList; track $index) {
+                            
+                        }
+                   </div> 
+
+                @if(!gaming()){
+
+                }@else {
+
+                }
+        
+            }@else {
+                    <app-ble-selector (Username)="username.set($event)"></app-ble-selector>
+            }
+        
+
+        </div>
+    </div>
+
+
 </div>
+<app-footer></app-footer>

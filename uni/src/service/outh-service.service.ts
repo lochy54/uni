@@ -34,7 +34,7 @@ export class OuthServiceService {
 
 
   logOut(){
-      this.apiService.logout(this._username()!.token).pipe(
+      return this.apiService.logout(this._username()!.token).pipe(
         tap( _ => {
           localStorage.removeItem("token")
           this._username.set(undefined)
