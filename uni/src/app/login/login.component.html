@@ -1,129 +1,119 @@
 <div class="main-login-container">
-    <div [className]="switchLogin()? 'left-open-container' : 'left-close-container'">
-        @if(!switchLogin()){
-            <span (click)="switchLogin.set(true)" class="material-symbols-outlined">
-                how_to_reg
-                </span>
-        }@else {
-            
-                <h2>Register</h2>
-            
-            <form [formGroup]="registerForm">
-                
-                <div class="input-container">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" formControlName="username" placeholder="Enter your username" />
-                    @if(registerForm.get('username')?.invalid && registerForm.get('username')?.touched){
-                    @if(registerForm.get('username')?.hasError('required')){
-                    <small>username is required</small>
-                    }
-                    @if(registerForm.get('username')?.hasError('minlength')){
-                    <small>min lenght 3</small>
-                    }
-                    @if(loginForm.get('username')?.hasError('maxlength')){
-                        <small>max lenght 20</small>
-                    }
-                    }
-                </div>
-    
-                <div class="input-container">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" formControlName="password" placeholder="Enter your password" />
-                    @if(registerForm.get('password')?.invalid && registerForm.get('password')?.touched){
-                    @if(registerForm.get('password')?.hasError('required')){
-                    <small>password is required</small>
-                    }
-                    @if(registerForm.get('password')?.hasError('minlength')){
-                    <small>min lenght 6</small>
-                    }
-                    }
-                </div>
-
-                <div class="input-container">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" formControlName="name" placeholder="Enter your name" />
-                    @if(registerForm.get('name')?.invalid && registerForm.get('name')?.touched){
-                    @if(registerForm.get('name')?.hasError('required')){
-                    <small>name is required</small>
-                    }
-                    }
-                </div>
-    
-                <div class="input-container">
-                    <label for="surname">Surname</label>
-                    <input type="text" id="surname" formControlName="surname" placeholder="Enter your surname" />
-                    @if(registerForm.get('surname')?.invalid && registerForm.get('surname')?.touched){
-                    @if(registerForm.get('surname')?.hasError('required')){
-                    <small>surname is required</small>
-                    }
-                    }
-                </div>
-
-                <div class="input-container">
-                    <div class="input-chekbox">
-                        <label for="accept"><a href="https://www.garanteprivacy.it/regolamentoue">Accept service</a></label>
-                        <input type="checkbox" id="accept" formControlName="accept"/>
-                    </div>
-                    @if(registerForm.get('accept')?.invalid && registerForm.get('accept')?.touched){
-                    @if(registerForm.get('accept')?.hasError('required')){
-                    <small>is required</small>
-                    }
-                    }
-                </div>
-                @if(!loading()){
-                    <button  [disabled]="registerForm.invalid" (click)="register()"> Register</button>
-                }@else {
-                    <div class="spinner"></div>
-                }
-            </form>
-        }
-
+    <div class="all-container play-logo-close" [class.main-login-open]="!switchLogin()" [class.main-login-close]="switchLogin()">
+        <span (click)="switchLogin.set(true)" class="material-symbols-outlined">
+            how_to_reg
+        </span>
     </div>
-    <div [className]="switchLogin()? 'right-close-container' : 'right-open-container'">
-        @if(!switchLogin()){
-                <h2>Login</h2>
-        <form [formGroup]="loginForm">
-            <div class="input-container">
-                <label for="username">Username</label>
-                <input type="text" id="username" formControlName="username" placeholder="Enter your username" />
-                @if(loginForm.get('username')?.invalid && loginForm.get('username')?.touched){
-                @if(loginForm.get('username')?.hasError('required')){
-                <small>username is required</small>
-                }
-                @if(loginForm.get('username')?.hasError('minlength')){
-                <small>min lenght 3</small>
-                }
-                @if(loginForm.get('username')?.hasError('maxlength')){
-                    <small>max lenght 20</small>
-                }
-                }
-            </div>
+    <form [formGroup]="registerForm" class="all-container form-container-open" [class.main-login-open]="!switchLogin()" [class.main-login-close]="switchLogin()">
+        <h2>Register</h2>
 
-            <div class="input-container">
-                <label for="password">Password</label>
-                <input type="password" id="password" formControlName="password" placeholder="Enter your password" />
-                @if(loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-                @if(loginForm.get('password')?.hasError('required')){
-                <small>password is required</small>
-                }
-                @if(loginForm.get('password')?.hasError('minlength')){
-                <small>min lenght 6</small>
-                }
-                }
-            </div>
-            @if(!loading()){
-                <button  [disabled]="loginForm.invalid" (click)="login()"> Login</button>
-            }@else {
-                <div class="spinner"></div>
+        <div class="input-container">
+            <label for="username">Username</label>
+            <input type="text" id="username1" formControlName="username" placeholder="Enter your username" class="form-input" />
+            @if(registerForm.get('username')?.invalid && registerForm.get('username')?.touched){
+            @if(registerForm.get('username')?.hasError('required')){
+            <small>username is required</small>
             }
-        </form>
+            @if(registerForm.get('username')?.hasError('minlength')){
+            <small>min lenght 3</small>
+            }
+            @if(loginForm.get('username')?.hasError('maxlength')){
+            <small>max lenght 20</small>
+            }
+            }
+        </div>
+
+        <div class="input-container">
+            <label for="password">Password</label>
+            <input type="password" id="password1" formControlName="password" placeholder="Enter your password"  class="form-input"/>
+            @if(registerForm.get('password')?.invalid && registerForm.get('password')?.touched){
+            @if(registerForm.get('password')?.hasError('required')){
+            <small>password is required</small>
+            }
+            @if(registerForm.get('password')?.hasError('minlength')){
+            <small>min lenght 6</small>
+            }
+            }
+        </div>
+
+        <div class="input-container">
+            <label for="name">Name</label>
+            <input type="text" id="name1" formControlName="name" placeholder="Enter your name"  class="form-input"/>
+            @if(registerForm.get('name')?.invalid && registerForm.get('name')?.touched){
+            @if(registerForm.get('name')?.hasError('required')){
+            <small>name is required</small>
+            }
+            }
+        </div>
+
+        <div class="input-container">
+            <label for="surname">Surname</label>
+            <input type="text" id="surname" formControlName="surname" placeholder="Enter your surname"  class="form-input"/>
+            @if(registerForm.get('surname')?.invalid && registerForm.get('surname')?.touched){
+            @if(registerForm.get('surname')?.hasError('required')){
+            <small>surname is required</small>
+            }
+            }
+        </div>
+
+        <div class="input-container">
+            <div class="input-chekbox">
+                <label for="accept"><a href="https://www.garanteprivacy.it/regolamentoue">Accept service</a></label>
+                <input type="checkbox" id="accept" formControlName="accept" />
+            </div>
+            @if(registerForm.get('accept')?.invalid && registerForm.get('accept')?.touched){
+            @if(registerForm.get('accept')?.hasError('required')){
+            <small>is required</small>
+            }
+            }
+        </div>
+        @if(!loading()){
+        <button [disabled]="registerForm.invalid" (click)="register()"> Register</button>
         }@else {
-            <span class="material-symbols-outlined"
-            (click)="switchLogin.set(false)">
-                login
-                </span>
+        <div class="spinner"></div>
         }
+    </form>
+
+
+    <form  [formGroup]="loginForm" class="all-container form-container-close" [class.main-login-open]="switchLogin()" [class.main-login-close]="!switchLogin()">
+        <h2>Login</h2>
+        <div class="input-container">
+            <label for="username">Username</label>
+            <input type="text" id="username" formControlName="username" placeholder="Enter your username"  class="form-input"/>
+            @if(loginForm.get('username')?.invalid && loginForm.get('username')?.touched){
+            @if(loginForm.get('username')?.hasError('required')){
+            <small>username is required</small>
+            }
+            @if(loginForm.get('username')?.hasError('minlength')){
+            <small>min lenght 3</small>
+            }
+            @if(loginForm.get('username')?.hasError('maxlength')){
+            <small>max lenght 20</small>
+            }
+            }
+        </div>
+
+        <div class="input-container">
+            <label for="password">Password</label>
+            <input type="password" id="password" formControlName="password" placeholder="Enter your password"  class="form-input"/>
+            @if(loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
+            @if(loginForm.get('password')?.hasError('required')){
+            <small>password is required</small>
+            }
+            @if(loginForm.get('password')?.hasError('minlength')){
+            <small>min lenght 6</small>
+            }
+            }
+        </div>
+        @if(!loading()){
+        <button [disabled]="loginForm.invalid" (click)="login()"> Login</button>
+        }@else {
+        <div class="spinner"></div>
+        }
+    </form>
+    <div class="all-container play-logo-open" [class.main-login-open]="switchLogin()" [class.main-login-close]="!switchLogin()">
+        <span class="material-symbols-outlined" (click)="switchLogin.set(false)">
+            login
+        </span> 
     </div>
 </div>
-
-

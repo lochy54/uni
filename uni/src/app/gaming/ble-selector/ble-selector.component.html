@@ -20,7 +20,11 @@
                 }
             </div>
             <div class="input-container">
-                <button (click)="connect()">Connect to a device</button>
+                @if(!loading()){
+                    <button (click)="connect()">Connect to a device</button>
+                    }@else {
+                    <div class="spinner"></div>
+                    }
                 @if(bleForm.get('connected')?.invalid && bleForm.get('connected')?.value != undefined){
                 <small>non connesso</small>
                 }

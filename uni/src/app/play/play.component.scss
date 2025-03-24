@@ -1,32 +1,90 @@
 
+  
 
-.open-container, .close-container {
+
+
+.all-container{
     box-shadow: 1vh 1vh 3vh #b96eff;
     padding: 4vh;
     font-size: large;
     justify-self: center;
     display: flex;
-    flex-direction: column;
     gap: 3vh;
-    width: max-content;
+    width: auto;
     justify-content: space-around;
-    transition: all 0.3s ease-in-out; 
-}   
-
-
-
-.open-container {
-    background-color: #8a2be2;
-    color: white;
-    border-top-right-radius: 2vh;
-    border-bottom-right-radius:2vh;
-    min-width: 30vw;
+    align-items: center;
 }
 
-.close-container {
-    background-color: white;
+
+.form-container-open{
+    border-top-right-radius: 2vh;
+    border-bottom-right-radius:2vh;
+    width: auto;
+    background-color: #8a2be2;
+    color: white;
+    align-items: start;
+    flex-direction: column ;
+    animation: openAnimation 0.5s forwards;
+}
+
+
+
+.form-container-close{
+    overflow: hidden;
+    padding: 0;
+    display: none;
+}
+
+
+
+.play-logo-open{
+    z-index: 100;
+    flex-direction: row;
     color: #8a2be2;
     border-top-left-radius: 2vh;
-    border-bottom-left-radius:2vh;
+    border-bottom-left-radius: 2vh;
+
+    background-color: white;
+    animation: fade 0.5s forwards;
+
+}
+
+.play-logo-close{
+    flex-direction: row ;
+    border-radius : 2vh;
+    background-color: #8a2be2;
+    color: white;
+    animation: fadeOut 0.5s forwards;
+}
+
+
+@keyframes openAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+@keyframes fadeOut {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 

@@ -1,0 +1,6 @@
+<div class="game-container"
+[style.backgroundImage]="'url(' + game.logo + ')'"
+(click)="selected.emit(game.pso) ; soundService.playClickSound()"
+>
+    <div class="game-name"><h2>{{game.name}}</h2></div>
+</div>

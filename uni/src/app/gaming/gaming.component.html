@@ -1,35 +1,94 @@
-
-
-
 <app-toaster-error></app-toaster-error>
 <app-header></app-header>
+@if(!chakLandsapeMode()){
+<app-landscape></app-landscape>
 
-<div class="main-container">
+}@else{
+<div class="main-container" #fullscreenDiv>
     <div class="game">
         <div class="game-screen">
-
+            <div class="game-screen-inner">
 
             @if(username()&&pression()){
-                   <div class="game-select">
+            <div class="main-menu">
+                <div class="all-container">
+                    <div  class="play play-logo-close" >
+                        <span class="material-symbols-outlined" (click)="toggleFullscreen(); soundService.playClickSound()">
+                            fullscreen
+                        </span>
+                    </div>
+                  
+                </div>
+
+                <div class="all-container">
+                    <div  class="play play-logo-close" >
+                        <span class="material-symbols-outlined" (click)=" gameSelect.set(1) ; soundService.playClickSound()">
+                            undo
+                            </span>
+                    </div>
+                </div>
+
+
+                <div class="all-container">
+                    <div class="play" [class.play-logo-open]="openAudio()" [class.play-logo-close]="!openAudio()">
+                        <span class="material-symbols-outlined" (click)="openDiff.set(false) ; openPLayer.set(false); openAudio.set(!openAudio()) ; soundService.playClickSound()">
+                            volume_up
+                            </span>
+                    </div>
+                    <div class="form" [class.play-form-open]="openAudio()" [class.play-form-close]="!openAudio()">
+                        <h2>Effect {{audioEffect()}}</h2><input type="range" id="AUDIO" min="0" max="10" value="5" (change)="onAudioEffectChange($event)"> 
+                        <h2>Song {{audioSong()}}</h2><input type="range" id="AUDIO" min="0" max="10" value="5" (change)="onAudioSongChange($event)"> 
+
+                    </div>
+                </div>
+
+                <div class="all-container">
+                    <div class="play" [class.play-logo-open]="openPLayer()" [class.play-logo-close]="!openPLayer()">
+                        <span class="material-symbols-outlined" (click)="openAudio.set(false); openDiff.set(false); openPLayer.set(!openPLayer()) ; soundService.playClickSound()" >
+                            person
+                        </span>
+                    </div>
+                    <div class="form" [class.play-form-open]="openPLayer()" [class.play-form-close]="!openPLayer()">
+                        <h2>{{username()}}</h2>
+                    </div>
+                </div>
+                <div class="all-container">
+                    <div class="play" [class.play-logo-open]="openDiff()" [class.play-logo-close]="!openDiff()">
+                        <span class="material-symbols-outlined" (click)="openAudio.set(false); openPLayer.set(false); openDiff.set(!openDiff()) ; soundService.playClickSound()">
+                            settings
+                            </span>
+                    </div>
+                    <div class="form" [class.play-form-open]="openDiff()" [class.play-form-close]="!openDiff()">
+                        <h2>DIFFICULTY {{difficulty()}}</h2><input type="range" id="difficulty" min="1" max="10" value="5" (change)="onDifficultyChange($event)"> 
+                    </div>
+                </div>
+          
+            </div>
+        
+            @switch (gameSelect()) {
+                @case (1) {
+                    <div class="game-select">
+                            <div class="game-select-title"><h1>SELECT GAME</h1></div>
                         @for (item of gameList; track $index) {
-                            
+                            <app-game-cover [game]="item" (selected)="gameSelect.set($event)"></app-game-cover>
                         }
-                   </div> 
-
-                @if(!gaming()){
-
-                }@else {
-
+                    </div>
                 }
-        
-            }@else {
-                    <app-ble-selector (Username)="username.set($event)"></app-ble-selector>
+                @case (2) {
+                    <app-flappy></app-flappy>
+                }
             }
-        
+          
 
+            }@else {
+            <app-ble-selector (Username)="username.set($event)"></app-ble-selector>
+            }
+
+        </div>
         </div>
     </div>
 
 
 </div>
+}
 <app-footer></app-footer>

@@ -39,13 +39,26 @@ button:disabled {
     transition: none; 
 }
 
-input[type="text"] , input[type="password"], input[type="number"]{
+
+input[type="text"] , input[type="password"], input[type="number"],input[type="range"]{
     border-radius: 2vh;
     border-style: solid;
     border-color: white;
     color: #8a2be2;
     padding: 1vh;
+
 }
+
+
+
+.form-input{
+    border-bottom: solid !important;
+    border-bottom-color: #838383 !important;
+    border-bottom-width: 0.02rem !important;
+    border-radius: 0 !important; 
+    outline: none !important;
+}
+
 
 input[type="checkbox"] {
     width: 1rem;  
@@ -78,6 +91,7 @@ form {
     display: flex;
     flex-direction: column;
     gap: 1vh;
+    width: 100%;
 }
 
 
@@ -118,7 +132,7 @@ a{
   }
 
   .input-chekbox{
-    display: flex;
+    display: flex; 
     flex-direction: row;
     justify-content: space-between;
 }
@@ -127,8 +141,5 @@ a{
 .main-container{
     width: 100vw;
     height: max-content;
-    min-height: 80vh;
-    align-content: center;
+    min-height: 85vh;
 }
-
-

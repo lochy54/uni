@@ -1,15 +1,18 @@
-.main-manu-container{
-    width: max-content;
-    height: max-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
 .username{
-
+    display: flex;
+    box-shadow: 1vh 1vh 3vh #b96eff;
+    background-color: #8a2be2;
+    color: white;
+    width: fit-content;
+    padding: 2vh;
+    border-radius: 2vh;
+    align-items: center;
+    gap: 2vw;
 }
 
-.stats{
-
+.main-menu-container{
+    margin-top: 10vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }

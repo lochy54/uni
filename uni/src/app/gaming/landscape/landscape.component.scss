@@ -1,0 +1,29 @@
+
+.main-container{
+    justify-content: center;
+    align-content: center;
+    display: flex   ;
+}
+
+.land{
+    font-size: 30vh;
+    text-align: center;
+    animation: rotateLoop 1s linear infinite alternate;
+    background-color: white;
+    border-radius: 10vh;
+    padding: 1vh;
+    color: #8a2be2;
+}
+
+@keyframes rotateLoop {
+    0% {
+        transform: rotate(0deg);
+    }
+    60% {
+        transform: rotate(90deg);
+    }
+
+    100% {
+        transform: rotate(90deg);
+    }
+}

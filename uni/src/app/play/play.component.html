@@ -1,5 +1,5 @@
 <div class="main-login-container">
-    <div class="close-container" style="flex-direction: row !important;" [style]="!playOpen()? 'border-radius : 2vh': ''">
+    <div class="all-container" [class.play-logo-open]="playOpen()" [class.play-logo-close]="!playOpen()">
         <span class="material-symbols-outlined" (click)="playOpen.set(!playOpen())">
             sports_esports
             </span>
@@ -7,8 +7,7 @@
         <h2>Tap to play</h2>
         }
     </div>
-    @if(playOpen()){
-    <div class="open-container">
+    <div class="all-container" [class.form-container-open]="playOpen()" [class.form-container-close]="!playOpen()">
                 <h2>Play</h2>
         <form [formGroup]="playForm">
             <div class="input-container">
@@ -33,7 +32,6 @@
             }
         </form>
     </div>
-}
 </div>
 
 

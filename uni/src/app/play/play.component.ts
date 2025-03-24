@@ -22,7 +22,7 @@ export class PlayComponent {
               private errorService: ErrorServiceService
   ){
     this.playForm = this.fb.nonNullable.group({
-      code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]],
+      code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]]
     });
 
     

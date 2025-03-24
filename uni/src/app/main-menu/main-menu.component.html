@@ -1,12 +1,21 @@
-
-<div class="main-manu-container">
+<div class="main-menu-container">
     <div class="username">
-        <div class="wcame"></div>
-        <div class="generate-code"><button (click)="generateCode()">code</button></div>
+        <div class="welcome">
+            <h1>Welcome {{ username().username }}</h1>
+        </div>
+        <div class="generate-code">
+            <button (click)="generateCode()">Generate Code</button>
+            <div class="code" [class.openCode]="showCode()" [class.closeCode]="!showCode()">
+               {{ showCode()}}
+            </div>
+        </div>
     </div>
 
     <div class="stats">
-
+        <table>
+            <tr>
+                <td>Stats Placeholder</td>
+            </tr>
+        </table>
     </div>
 </div>
-

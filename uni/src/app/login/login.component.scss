@@ -1,67 +1,95 @@
+.main-login-open{
+    animation: fade 0.5s forwards;
 
+}
 
+.main-login-close{
+    display: none !important;
+    animation: fadeOut 0.5s forwards;
+}
 
-.left-open-container, .right-open-container, .left-close-container, .right-close-container {
+.all-container{
     box-shadow: 1vh 1vh 3vh #b96eff;
     padding: 4vh;
     font-size: large;
     justify-self: center;
     display: flex;
-    flex-direction: column;
     gap: 3vh;
-    width: max-content;
+    width: auto;
     justify-content: space-around;
-    transition: all 0.3s ease-in-out; 
+    align-items: center;
+    
+}
 
-
-}   
-
-.left-open-container, .right-open-container{
+.form-container-open, .form-container-close {
     min-width: 30vw;
 }
 
-
-.left-open-container {
-    background-color: #8a2be2;
-    color: white;
-    border-top-left-radius: 2vh;
-    border-bottom-left-radius:2vh;
+a{
+    color: #8a2be2;
 }
 
-.right-open-container {
-    background-color: #8a2be2;
-    color: white;
+.form-container-open{
     border-top-right-radius: 2vh;
     border-bottom-right-radius:2vh;
-}
-
-.left-close-container {
+    width: auto;
     background-color: white;
     color: #8a2be2;
+    align-items: start;
+    flex-direction: column ;
+}
+
+
+
+.form-container-close{
     border-top-left-radius: 2vh;
     border-bottom-left-radius:2vh;
-}
-
-.right-close-container {
+    width: auto;
     background-color: white;
     color: #8a2be2;
-    border-top-right-radius: 2vh;
-    border-bottom-right-radius:2vh;
+    align-items: start;
+    flex-direction: column ;
 }
 
 
 
+.play-logo-open{
+    z-index: 100;
+    flex-direction: row;
+    background-color: #8a2be2;
+    color: white;
+    animation: fade 0.5s forwards;
+    border-top-right-radius : 2vh;
+    border-bottom-right-radius : 2vh;
 
-
-
-.switchLogin{
-    align-self: center;
-    cursor: pointer;
-    font-size: xx-large;
 }
 
-.switchLogin:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
+.play-logo-close{
+    flex-direction: row ;
+    border-top-left-radius : 2vh;
+    border-bottom-left-radius : 2vh;
+    background-color: #8a2be2;
+    color: white;
+}
+
+
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
