@@ -49,7 +49,7 @@ login(){
     this.outhService.login(l).pipe(finalize(() => this.loading.set(false)) ).subscribe(
       {
         error : (err) =>{
-          this.errorService.setError(err)
+          this.errorService.setError(err.error)
         }
       }
     )
@@ -66,7 +66,7 @@ register(){
     }
     this.outhService.register(u).pipe(finalize(() => this.loading.set(false)) ).subscribe({
       error: (err) => {
-          this.errorService.setError(err)
+          this.errorService.setError(err.error)
       },
     })
   }

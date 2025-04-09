@@ -11,20 +11,25 @@
     justify-content: space-between;
     align-items: center;
     color: white;
-    .logo{
-        padding-left: 5vw;
-       height: 10vh;
-    }
-    z-index: 100;
+    z-index: 300;
 }
 
-.material-symbols-outlined{
-    font-size: 7vh;
+img{
+    max-height: 10vh;
+    padding-left: 5vw;
+    max-width: 150px;
 }
+
 
 .home{
+    max-height: 10vh;
     padding-right: 5vw;
     display: flex;
     flex-direction: row;
+    align-items: center;
+
+    h1{
+        padding: 0;
+    }
 }
 

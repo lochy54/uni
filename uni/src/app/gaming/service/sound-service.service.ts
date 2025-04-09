@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,15 +7,22 @@ import { Injectable } from '@angular/core';
 export class SoundServiceService {
   private click = new Audio('./sound/click.wav');
   private loopMain = new Audio('./sound/loopMain.mp3');
-  private loopGame = new Audio('./sound/loopGame.mp3');
   private start = new Audio('./sound/start.mp3');
   private connected = new Audio('./sound/connected.mp3');
+  private loopGame = new Audio('./sound/loopGame.mp3'); 
+  private die = new Audio('./sound/die.mp3');
+  private animation = new Audio('./sound/animation.mp3');
 
-  private die = new Audio('./sound/die.wav');
-  private animation = new Audio('./sound/animation.wav');
+  private volumeS: number = 0.1;
+  private volumeA: number = 0.3;
 
-  private volumeS: number = 0.5;
-  private volumeA: number = 0.5;
+  private _volume : BehaviorSubject<{
+    volumeS : number,
+     volumeA: number
+  }> = new BehaviorSubject({
+    volumeA : this.volumeA*10,
+    volumeS : this.volumeS*10
+  })
 
   constructor() {
     this.initializeSounds();
@@ -25,6 +33,10 @@ export class SoundServiceService {
       audio.volume = this.volumeS;
       audio.load();
     });
+  }
+
+  get volume(){
+    return  this._volume.asObservable()
   }
 
   playClickSound() {
@@ -60,6 +72,10 @@ export class SoundServiceService {
 
   setVolumeEffect(vol: number) {
     this.volumeA = vol / 10;
+    this._volume.next({
+      volumeA : vol,
+      volumeS : this.volumeS * 10
+    });
     [this.click ,this.start, this.die, this.animation , this.connected].forEach(audio => {
       audio.volume = this.volumeA;
     });
@@ -67,6 +83,10 @@ export class SoundServiceService {
 
   setVolumeSong(vol: number) {
     this.volumeS = vol / 10;
+    this._volume.next({
+      volumeS : vol,
+      volumeA : this.volumeA *10
+    });
     [this.loopMain, this.loopGame].forEach(audio => {
       audio.volume = this.volumeS;
     });
@@ -86,7 +106,6 @@ export class SoundServiceService {
   stopLoopGame() {
     this.loopGame.pause();
     this.loopGame.currentTime = 0;
-    console.log("£")
   }
 
 

@@ -1,0 +1,15 @@
+<div class="game-over">
+    
+    <div class="play">
+        <span class="material-symbols-outlined"
+    (click)="again()">
+        sports_esports
+        </span>
+    </div>
+  
+    <h1>  @if(!countDown()){
+        AGANE
+    }@else {
+        {{countDown()}}
+    }</h1>
+</div>

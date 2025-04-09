@@ -5,14 +5,11 @@ h1{
 }
 
 .game{
-    margin-top: 5vh;
     border-radius: 2vh;
     margin-left: 5vw;
     width: 90vw;
-    height: 80vh;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    padding: 1vh;
+    height: max-content;
     box-shadow: 1vh 1vh 3vh #b96eff;
     color: white;
     background: linear-gradient(135deg, 
@@ -34,112 +31,45 @@ animation: gradientAnimation 8s ease-in-out infinite alternate;
 
 
 
-.game-screen{
-    width: 89vw;
-    height: 78vh;
-    background-color: rgba(0, 0, 0, 0.788);
-    border-radius: 2vh;
-
-}
-
-.game-screen-inner{
-    padding: 1vw;
-    display: flex;
-    gap: 2vw;
-    flex-direction: row;
-}
-
-.main-menu{
-    display: flex;
-    flex-direction: column;
-    gap: 2vh;
-}
 
 
-
-.all-container{
-   display: flex;
-   flex-direction: row;
-}
-
-.play{
-    color: #8a2be2;
-    background-color: white;
-    padding: 2vh;
-}
-
-.play-logo-open{
-    border-top-left-radius: 2vh;
-    border-bottom-left-radius: 2vh;
-  
-}
-
-.play-logo-close{
-    flex-direction: row ;
-    border-radius : 2vh;
-}
-
-
-.form{
-    background-color: #8a2be2;
-    left: 11vh;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding-left: 2vw;
-    padding: 1vh;
-    padding-right: 2vw;
-    align-content: center;
-    align-items: center;
-    border-top-right-radius: 2vh;
-    border-bottom-right-radius: 2vh;
-    width: max-content;
-    z-index: 100;
-    h2{
-        height: 100%;
-        align-content: center;
-    }
-}
-
-.play-form-open{
-    animation: openAnimation 0.5s forwards;
-}
-
-.play-form-close{
-    display: none !important;
-}
-
-
-
-@keyframes openAnimation {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
 .game-select-title{
     background-color: white;
     color: #8a2be2;
     padding: 2vh;
     width: 100%;
     border-radius: 2vh;
-    max-height: fit-content;
+    height: fit-content;
 }
 
 
-.game-select{
-    width: 100%;
-    padding-left: 1vw;
+.game-canvas{
+    width: -webkit-fill-available;
+    height: 80vh;
+    border-radius: 2vh;
+    border-width: 0.5vh;
+    border-style: solid;
+    border-color: #000000;
+    background-color: #000000b9;
+    }
+    
+.game-select-title{
+    margin-left: 15vw;
+    position: sticky;
+    margin-top: 3vh;
+    width: 70vw;
+    margin-bottom: 2vh;
+    z-index: 100;
+}
+
+.game-select-list{
+    padding-top: 2vh;
+    gap: 6vh;
+    justify-content: space-evenly;
+    height: 54vh ;
+    overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
-    align-content : flex-start;
-    max-height: 70vh;
-    gap: 3vw;
-    overflow-y: scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
 }

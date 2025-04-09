@@ -1,12 +1,8 @@
-<div class="game-container-flappy">
-    <canvas #gameCanvas width="800" height="600"></canvas>
-@if(isGameOver()){
 
-    <div class="game-over">
-      <h2>Game Over!</h2>
-      <p>Score: {{ score() }}</p>
-      <button (click)="startGame()">Restart</button>
-    </div>
-}
-  </div>
-  
+<canvas #gameCanvas></canvas>
+
+    @if(gameOver()){
+        <app-game-over (PlayAgane)="startGame()"></app-game-over>
+    }@else{
+        <app-score [score]="points()"></app-score>
+    }

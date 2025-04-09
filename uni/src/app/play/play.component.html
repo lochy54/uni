@@ -25,6 +25,21 @@
                 }
                 }
             </div>
+            <div class="input-container">
+                <label for="username">Enter your username</label>
+                <input type="text" id="usernamPlay" formControlName="username" placeholder="Enter your username" />
+                @if(playForm.get('username')?.invalid && playForm.get('username')?.touched){
+                @if(playForm.get('username')?.hasError('required')){
+                <small>username is required</small>
+                }
+                @if(playForm.get('username')?.hasError('minlength')){
+                <small>min lenght 3</small>
+                }
+                @if(playForm.get('username')?.hasError('maxlength')){
+                    <small>max lenght 20</small>
+                }
+                }
+            </div>
             @if(!loading()){
                 <button  [disabled]="playForm.invalid" (click)="play()">Play</button>
             }@else {

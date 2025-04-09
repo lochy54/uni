@@ -22,7 +22,9 @@ export class PlayComponent {
               private errorService: ErrorServiceService
   ){
     this.playForm = this.fb.nonNullable.group({
-      code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]]
+      code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]],
+      username: ["", [Validators.required, Validators.minLength(3),Validators.maxLength(20)]]
+
     });
 
     
@@ -31,7 +33,7 @@ export class PlayComponent {
 play(){
     if(this.playForm.valid){
       this.apiService.isCodeActive(this.playForm.controls["code"].value).subscribe({
-        next : (_) => {this.router.navigate(['/game/'+this.playForm.controls["code"].value]);},
+        next : (_) => {this.router.navigate(['/game/'+this.playForm.controls["code"].value+"/"+this.playForm.controls["username"].value]);},
         error : (err)=> {
           this.errorService.setError(err.error);
         },

@@ -1,6 +1,6 @@
 /// <reference types="web-bluetooth" />
 import { Component, computed, effect } from '@angular/core';
-import { BleServiceService } from '../service/ble-service.service';
+import { BleServiceService } from './gaming/service/ble-service.service';
 import { ToasterErrorComponent } from "./toaster-error/toaster-error.component";
 import { LoginComponent } from "./login/login.component";
 import { OuthServiceService } from '../service/outh-service.service';

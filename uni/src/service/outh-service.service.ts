@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { ErrorServiceService } from './error-service.service';
 import { ApiServiceService, login, user } from './api-service.service';
-import { catchError, map, of, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
+import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,41 +10,33 @@ import { catchError, map, of, tap, throwError } from 'rxjs';
 
 
 
-export class OuthServiceService {
-  private _username = signal<{username : string, token : string} | undefined>(undefined);
-  public get username() {
-    return this._username.asReadonly();
+export class OuthServiceService implements CanActivate {
+  private _username : ReplaySubject< string | undefined> = new ReplaySubject(1)
+
+  get username() : Observable<string | undefined> {
+    return this._username.asObservable();
   }
 
   
-  constructor(private errorService : ErrorServiceService, private apiService : ApiServiceService) { 
-    const token = localStorage.getItem("token")
-    if(token){
-      this.apiService.chekToken(token).subscribe({
-        next : (value) => {
-          this._username.set({
-            username: value,
-            token: token
-          })
-        },error : (err) =>  {
-          this.errorService.setError("Login Spoiled")
+  constructor(private router : Router, private apiService : ApiServiceService) {}
+
+
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+
+    this.apiService.chekToken().subscribe({
+      next : (value) => {
+        if(value){
+          this._username.next(value)
         }
-       })
-    }
-  }
+      } 
+  })
+  return true
+}
 
 
   logOut(){
-      return this.apiService.logout(this._username()!.token).pipe(
-        tap( _ => {
-          localStorage.removeItem("token")
-          this._username.set(undefined)
-        }),
-        catchError(err => {
-          return throwError(() => err.message); 
-        })
-      );
-
+      localStorage.removeItem("token")
+      this._username.next(undefined)
 }
 
 
@@ -51,13 +44,7 @@ export class OuthServiceService {
     return this.apiService.login(l).pipe(
       tap(value => {
         localStorage.setItem("token", value);
-        this._username.set({
-          username: l.username,
-          token: value
-        });
-      }),
-      catchError(err => {
-        return throwError(() => err.message); 
+        this._username.next(l.username)
       })
     );
   }
@@ -66,13 +53,7 @@ export class OuthServiceService {
     return this.apiService.register(u).pipe(
       tap(value => {
         localStorage.setItem("token", value);
-        this._username.set({
-          username: u.username,
-          token: value
-        });
-      }),
-      catchError(err => {
-        return throwError(() => err.message); 
+        this._username.next(u.username)
       })
     );
   }

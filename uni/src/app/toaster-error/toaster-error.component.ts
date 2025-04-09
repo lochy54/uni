@@ -1,5 +1,6 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ErrorServiceService } from '../../service/error-service.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-toaster-error',
@@ -9,8 +10,8 @@ import { ErrorServiceService } from '../../service/error-service.service';
   styleUrl: './toaster-error.component.scss'
 })
 export class ToasterErrorComponent {
-  errorList = computed<string[]>(()=>{
-    return this.errorService.errorS()
-  })
-  constructor(private errorService : ErrorServiceService){}
+  private errorService = inject(ErrorServiceService)
+  errorList = toSignal(this.errorService.errorS)
+  constructor(){
+  }
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
 	"progettoUni.com/mongo"
@@ -10,6 +9,7 @@ import (
 )
 
 var Conn = mongo.CreateCLient("mongodb://localhost:27017", "uniGame")
+
 var Maps = token.CreateMaps()
 
 func main() {
@@ -27,14 +27,16 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("connected to mongo")
-
 	app.WrapRouter(corsHandler)
-	app.Post("/login", login)
-	app.Post("/logout", logout)
-	app.Post("/chekToken", chekToken)
-	app.Post("/register", register)
-	app.Post("/generate", generateCode)
-	app.Post("/chekCode", chekCode)
+	api := app.Party("/api")
+
+	api.Post("/login", login)
+	api.Get("/chekToken", chekToken)
+	api.Post("/register", register)
+	api.Get("/generate", generateCode)
+	api.Post("/chekCode", chekCode)
+	api.Post("/saveSens", saveSens)
+	api.Get("/getSens", getSens)
 
 	app.Listen("0.0.0.0:8080")
 }
@@ -52,7 +54,7 @@ func register(ctx iris.Context) {
 		ctx.JSON(err.Error())
 		return
 	}
-	err, token := Maps.GenerateToken(user.Username)
+	err, token := token.GenerateJWT(user.Username)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -63,13 +65,23 @@ func register(ctx iris.Context) {
 }
 
 func chekToken(ctx iris.Context) {
-	var t string
-	if err := ctx.ReadJSON(&t); err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
 		return
 	}
-	err, user := Maps.RefreshToken(t)
+
+	var t string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
+		return
+	}
+
+	err, user := token.ValidateJWT(t)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -92,7 +104,7 @@ func login(ctx iris.Context) {
 		ctx.JSON(err.Error())
 		return
 	}
-	err, token := Maps.GenerateToken(l.Username)
+	err, token := token.GenerateJWT(l.Username)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -102,40 +114,31 @@ func login(ctx iris.Context) {
 	ctx.JSON(token)
 }
 
-func logout(ctx iris.Context) {
-	var t string
-	if err := ctx.ReadJSON(&t); err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
-	if err := Maps.DeleteToken(t); err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
-	ctx.StatusCode(iris.StatusOK)
-}
 
 func generateCode(ctx iris.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
+
 	var t string
-	if err := ctx.ReadJSON(&t); err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
 		return
 	}
-	err, username := Maps.RefreshToken(t)
+
+	err, username := token.ValidateJWT(t)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	err, code := Maps.GenerateCode(username)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
+	code := Maps.GenerateCode(username)
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(code)
 }
@@ -147,7 +150,7 @@ func chekCode(ctx iris.Context) {
 		ctx.JSON(err.Error())
 		return
 	}
-	if err:= Maps.IsCodeActive(c); err!= nil {
+	if _ ,err:= Maps.IsCodeActive(c); err!= nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
@@ -155,5 +158,64 @@ func chekCode(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 }
 
+func saveSens(ctx iris.Context) {
+	
+	var s mongo.SensRes
+	if err := ctx.ReadJSON(&s); err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
 
-//da fare parte gestione codici (tap to play invio) e inizio gioco inserimento username e connessione pluethho
+	u ,err := Maps.IsCodeActive(authHeader);
+	if err!= nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	s.Username = u
+	if err := Conn.SaveSens(s); err!= nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.StatusCode(iris.StatusOK)
+}
+
+func getSens(ctx iris.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
+
+	var t string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
+		return
+	}
+
+	err, username := token.ValidateJWT(t)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	res, err := Conn.GetSens(username)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.JSON(res)
+}

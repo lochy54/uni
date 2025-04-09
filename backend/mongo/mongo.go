@@ -23,11 +23,24 @@ type User struct {
 	Password string `json:"password" bson:"password" validate:"required,min=6"`
 }
 
+type pression struct {
+	Pression float64  `json:"pression" bson:"pression"`
+	Timestap int `json:"timestap" bson:"timestap"`
+}
+type SensRes struct {
+	Player string `json:"player" bson:"player"`
+	Username string `bson:"username"`
+	Press []pression `json:"pression" bson:"pression"` 
+}
+
+
 type Connection struct {
 	database string
 	url      string
 	client   *mongo.Client
 }
+
+
 
 func CreateCLient(url string, database string) *Connection {
 	return &Connection{
@@ -117,3 +130,58 @@ func checkPassword(hashedPassword, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
 }
+
+
+func (c *Connection) SaveSens(s SensRes) error {
+
+	session, err := c.client.StartSession()
+	if err != nil {
+		return err
+	}
+	defer session.EndSession(context.TODO())
+
+	err = session.StartTransaction()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err != nil {
+			session.AbortTransaction(context.TODO())
+		} else {
+			err = session.CommitTransaction(context.TODO())
+		}
+	}()
+
+	collection := c.client.Database(c.database).Collection("games")
+	_, err = collection.InsertOne(context.TODO(), s)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Connection) GetSens(u string) ([]SensRes, error) {
+	var res []SensRes
+	collection := c.client.Database(c.database).Collection("games")
+	cursor, err := collection.Find(context.TODO(), bson.M{"username": u})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	for cursor.Next(context.TODO()) {
+		var item SensRes
+		if err := cursor.Decode(&item); err != nil {
+			return nil, err
+		}
+		res = append(res, item)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+

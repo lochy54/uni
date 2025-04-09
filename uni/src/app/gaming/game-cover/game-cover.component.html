@@ -1,6 +1,11 @@
-<div class="game-container"
-[style.backgroundImage]="'url(' + game.logo + ')'"
-(click)="selected.emit(game.pso) ; soundService.playClickSound()"
->
-    <div class="game-name"><h2>{{game.name}}</h2></div>
+<div class="game-card" >
+    <div class="game-thumbnail" [style.backgroundImage]="'url(' + logo + ')'">
+        <div class="overlay" (click)="selected.emit(pso) ; soundService.playClickSound()">
+            <h1>PLAY</h1>
+        </div>
+    </div>
+    <div class="game-info">
+        <span class="material-symbols-outlined">sports_esports</span>
+        <h2>{{ name }}</h2>
+    </div>
 </div>

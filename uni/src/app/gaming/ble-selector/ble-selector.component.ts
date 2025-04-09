@@ -1,5 +1,5 @@
 import { Component, computed, effect, EventEmitter, Output, signal } from '@angular/core';
-import { BleServiceService } from '../../../service/ble-service.service';
+import { BleServiceService } from '../service/ble-service.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ErrorServiceService } from '../../../service/error-service.service';
 import { SoundServiceService } from '../service/sound-service.service';
@@ -13,7 +13,7 @@ import { finalize } from 'rxjs';
   styleUrl: './ble-selector.component.scss'
 })
 export class BleSelectorComponent {
-  @Output() Username : EventEmitter<string> = new EventEmitter<string>()
+  @Output() Start : EventEmitter<boolean> = new EventEmitter<boolean>()
   bleForm: FormGroup;
   loading = signal<boolean>(false)
   constructor(private bleService : BleServiceService,
@@ -23,7 +23,6 @@ export class BleSelectorComponent {
   ){
 
      this.bleForm = this.fb.nonNullable.group({
-          username: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(20)]],
           connected: [undefined, [Validators.requiredTrue]]
         });
     }
@@ -38,7 +37,7 @@ export class BleSelectorComponent {
       },
       error : (err) => {
         this.bleForm.controls["connected"].setValue(false)
-        this.errorService.setError(err)
+        this.errorService.setError(err.message)
       }
     })
   }
@@ -47,8 +46,8 @@ export class BleSelectorComponent {
   start(){
 
       if(this.bleForm.valid){
-        this.Username.emit(this.bleForm.controls["username"].value)
         this.audioService.playStartSound()
+        this.Start.emit(true)
       }
   
   }

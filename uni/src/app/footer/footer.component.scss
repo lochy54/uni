@@ -9,19 +9,17 @@
     align-items: center;
 }
 
-.footer-logo {
-    display: flex;
-    justify-content: center; 
-}
-
-.footer-logo img {
-    max-width: 30vw;
+img {
+    max-height: 30vh;
+    max-width: 400px;
     min-width: 300px;
 }
 
 .footer-explanetion {
-    min-width: 300px;
+    max-height: 30vh;
+    min-width: 200px;
+    max-width: 400px;
+    margin-left: 5vw;
+    margin-right: 5vw;
     text-align: center; 
-    max-width: 600px; 
 }
-

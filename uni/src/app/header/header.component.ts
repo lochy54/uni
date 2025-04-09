@@ -17,14 +17,8 @@ constructor(private router : Router,
           
 ){}
 return(){
-  if(this.outHserveice.username()){
-    this.outHserveice.logOut().subscribe(
-      {
-        error : (err) =>{
-          this.errorService.setError(err)
-        }
-      })
-  }else{
+  if(this.outHserveice.username){
+    this.outHserveice.logOut()
     this.router.navigate(['/']);
   }
 }

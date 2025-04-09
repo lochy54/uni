@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { game } from '../gaming.component';
 import { SoundServiceService } from '../service/sound-service.service';
 
 @Component({
@@ -10,7 +9,11 @@ import { SoundServiceService } from '../service/sound-service.service';
   styleUrl: './game-cover.component.scss'
 })
 export class GameCoverComponent {
-  @Input({required:true})game!: game;
+  @Input({required:true})name!: string;
+  @Input({required:true})logo!: string;
+  @Input({required:true})pso!: number;
+
+
   @Output() selected : EventEmitter<number> = new EventEmitter
   constructor(public soundService : SoundServiceService){}
 }

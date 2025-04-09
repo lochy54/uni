@@ -1,0 +1,36 @@
+.game-over{
+    position: absolute;
+    width: 90vw;
+    height: 81vh;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    margin: 1vh;
+    border-radius: 2vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2vh;
+    display: flex;
+    
+    h1 , .material-symbols-outlined{
+        font-size: 10rem;
+        margin-top: 2vh;
+        padding: 0;
+        margin: 0;
+    }
+    @media (max-width: 900px) {
+        h1 , .material-symbols-outlined{
+            font-size:3rem;
+        }
+    }
+    .play{
+        background-color: white;
+        color: #8a2be2;
+        padding: 2vh;
+        border-radius: 2vh;
+        cursor: pointer;
+
+    }
+}
+

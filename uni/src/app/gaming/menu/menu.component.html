@@ -1,0 +1,86 @@
+@if(openMenu()){
+    <div class="pause">
+        <h1>PAUSE</h1>
+    </div>
+}
+<div class="main-menu">
+    <div class="show">
+        <div  class="play play-logo-close" >
+            @if(openMenu()){
+                <span class="material-symbols-outlined" (click)="openMenu.set(false); soundService.playClickSound();  onPouse(false)">
+                    play_arrow
+                </span>
+            }@else {
+                <span class="material-symbols-outlined" (click)="openMenu.set(true); soundService.playClickSound(); onPouse(true)">
+                    pause
+                </span>
+            }
+        </div>
+      
+    </div>
+
+
+    <div class="show_close" [class.show]="openMenu()">
+        <div  class="play play-logo-close" >
+            <span class="material-symbols-outlined" (click)="fullScreen.emit(true); soundService.playClickSound()">
+                fullscreen
+            </span>
+        </div>
+      
+    </div>
+
+    <div class=" show_close" [class.show]="openMenu()">
+        <div  class="play play-logo-close" >
+            <span class="material-symbols-outlined" (click)="resetGame.emit(true); soundService.playClickSound()">
+                undo
+            </span>
+        </div>
+    </div>
+
+
+    <div class=" show_close" [class.show]="openMenu()">
+        <div class="play" [class.play-logo-open]="openAudio()" [class.play-logo-close]="!openAudio()">
+            <span class="material-symbols-outlined" (click)=" openAudio.set(!openAudio()) ; soundService.playClickSound()">
+                volume_up
+                </span>
+        </div>
+        <div class="form" [class.play-form-open]="openAudio()" [class.play-form-close]="!openAudio()">
+            <h2>Effect {{audio()!.volumeA}}</h2><input type="range" id="AUDIO" min="0" max="10" [value]="audio()!.volumeA" (change)="onAudioEffectChange($event)"> 
+            <h2>Song {{audio()!.volumeS}}</h2><input type="range" id="AUDIO" min="0" max="10" [value]="audio()!.volumeS" (change)="onAudioSongChange($event)"> 
+
+        </div>
+    </div>
+
+    <div class=" show_close" [class.show]="openMenu()">
+        <div class="play" [class.play-logo-open]="openPLayer()" [class.play-logo-close]="!openPLayer()">
+            <span class="material-symbols-outlined" (click)="openPLayer.set(!openPLayer()) ; soundService.playClickSound()" >
+                person
+            </span>
+        </div>
+        <div class="form" [class.play-form-open]="openPLayer()" [class.play-form-close]="!openPLayer()">
+            <h2>{{username()}}</h2>
+        </div>
+    </div>
+    <div class=" show_close" [class.show]="openMenu()">
+        <div class="play" [class.play-logo-open]="openDiff()" [class.play-logo-close]="!openDiff()">
+            <span class="material-symbols-outlined" (click)="openDiff.set(!openDiff()) ; soundService.playClickSound()">
+                settings
+                </span>
+        </div>
+        <div class="form" [class.play-form-open]="openDiff()" [class.play-form-close]="!openDiff()">
+            <h2>Difficulty {{difficulty()}}</h2><input type="range" id="difficulty" min="1" max="10" [value]="difficulty()!" step="1" (change)="onDifficultyChange($event)"> 
+            <h2>Sensibility {{sensibility()}}</h2><input type="range" id="difficulty" min="0.1" max="4.0" [value]="sensibility()!" step="0.1" (change)="onSensChange($event)"> 
+
+        </div>
+    </div>
+    <div class=" show_close" [class.show]="openMenu()">
+        <div class="play" [class.play-logo-open]="openBle()" [class.play-logo-close]="!openBle()">
+            <span class="material-symbols-outlined" (click)="openBle.set(!openBle()) ; soundService.playClickSound()">
+                    bluetooth
+                </span>
+        </div>
+        <div class="form" [class.play-form-open]="openBle()" [class.play-form-close]="!openBle()">
+            <h2>Status {{pression()}}</h2>
+        </div>
+    </div>
+</div>

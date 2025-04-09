@@ -1,7 +1,7 @@
 <div class="main-menu-container">
     <div class="username">
         <div class="welcome">
-            <h1>Welcome {{ username().username }}</h1>
+            <h1>Welcome {{ username() }}</h1>
         </div>
         <div class="generate-code">
             <button (click)="generateCode()">Generate Code</button>
@@ -12,10 +12,17 @@
     </div>
 
     <div class="stats">
-        <table>
-            <tr>
-                <td>Stats Placeholder</td>
-            </tr>
-        </table>
+        @for (item of stats(); track $index) {
+      <div class="game">
+        <div class="header">{{item.player}}</div>
+        <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [title]="chartOptions.title">
+      </apx-chart>
+      </div>
+    }
     </div>
+    
 </div>
