@@ -8,7 +8,7 @@ export class BleServiceService {
   private readonly PRESSION_SERVICE_UUID = '19b10030-e8f2-537e-4f6c-d104768a1214';
   private readonly PRESSION_CHAR_UUID = '19b10031-e8f2-537e-4f6c-d104768a1214';
 
-  private _pressureSignal : ReplaySubject<number | undefined> = new ReplaySubject(undefined);
+  private readonly _pressureSignal : ReplaySubject<number | undefined> = new ReplaySubject(undefined);
 
   public get pressureSignal() {
     return this._pressureSignal.asObservable();
@@ -16,7 +16,6 @@ export class BleServiceService {
 
   private characteristic: BluetoothRemoteGATTCharacteristic | undefined = undefined;
 
-  constructor() {}
 
   connect(): Observable<void> {
     return from(this._connect());

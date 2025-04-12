@@ -12,22 +12,23 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class GameOverComponent {
     @Output() PlayAgane : EventEmitter<boolean> = new EventEmitter()
-    countDown = signal<number|undefined>(undefined)
+    private readonly soundservice = inject(SoundServiceService)
+    private readonly playerService = inject(PlayerServiceService)
+    private readonly pause = toSignal(this.playerService.pouseSignal)
+    readonly countDown = signal<number|undefined>(undefined)
+
     private countdownInterval: any;
-    private playerService = inject(PlayerServiceService)
-    private pause = toSignal(this.playerService.pouseSignal)
     private pausedAt : number | undefined
-    constructor(private soundservice : SoundServiceService){
+
+    constructor(){
       effect(() => {
         if (this.pause()) {
           if (this.countDown()) {
             this.pausedAt = this.countDown();
             clearInterval(this.countdownInterval);
-            console.log("no")
           }
         } else {
           if (this.pausedAt) {
-            console.log("si")
             this.startCountdown(this.pausedAt);
             this.pausedAt = undefined;
           }
@@ -40,7 +41,7 @@ export class GameOverComponent {
       this.startCountdown(3);
     }
 
-    startCountdown(n : number) {
+    private startCountdown(n : number) {
       this.countDown.set(n)
       this.countdownInterval = setInterval(() => {
         if (this.countDown()! > 1) {

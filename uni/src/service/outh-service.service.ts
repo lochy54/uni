@@ -1,6 +1,5 @@
-import { Injectable, signal } from '@angular/core';
-import { ErrorServiceService } from './error-service.service';
-import { ApiServiceService, login, user } from './api-service.service';
+import { inject, Injectable, signal } from '@angular/core';
+import { ApiServiceService, login, user} from './api-service.service';
 import { catchError, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
 import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from '@angular/router';
 
@@ -11,32 +10,35 @@ import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, R
 
 
 export class OuthServiceService implements CanActivate {
-  private _username : ReplaySubject< string | undefined> = new ReplaySubject(1)
-
+  private readonly _username : ReplaySubject< string | undefined> = new ReplaySubject(1)
+  private readonly router = inject(Router)
+  private readonly apiService = inject(ApiServiceService)
   get username() : Observable<string | undefined> {
     return this._username.asObservable();
   }
 
   
-  constructor(private router : Router, private apiService : ApiServiceService) {}
-
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-
-    this.apiService.chekToken().subscribe({
-      next : (value) => {
-        if(value){
-          this._username.next(value)
-        }
-      } 
-  })
-  return true
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    let username : string|undefined 
+    this._username.subscribe((val)=>username = val)
+    if(username){
+        this._username.next(username)
+        return true
+    }
+    return this.apiService.chekToken().pipe(
+      tap((res) => {this._username.next(res)}),
+      map(() => true),
+      catchError(() => {
+        this.router.navigateByUrl("")
+        return of(false)})
+    )
 }
 
 
   logOut(){
       localStorage.removeItem("token")
       this._username.next(undefined)
+      this.router.navigateByUrl("")
 }
 
 
@@ -45,6 +47,7 @@ export class OuthServiceService implements CanActivate {
       tap(value => {
         localStorage.setItem("token", value);
         this._username.next(l.username)
+        this.router.navigateByUrl("private")
       })
     );
   }
@@ -57,5 +60,6 @@ export class OuthServiceService implements CanActivate {
       })
     );
   }
+
 
 }

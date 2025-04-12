@@ -3,33 +3,33 @@ import { SoundServiceService } from '../service/sound-service.service';
 import { BleServiceService } from '../service/ble-service.service';
 import { PlayerServiceService } from '../service/player-service.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TreeModule } from 'primeng/tree';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [],
+  imports: [TreeModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
 export class MenuComponent {
-  openMenu = signal<boolean>(false)
-  openBle= signal<boolean>(false)
-  openAudio = signal<boolean>(false)
-  openPLayer = signal<boolean>(false)
-  openDiff= signal<boolean>(false)
-  soundService = inject(SoundServiceService)
-  audio = toSignal(this.soundService.volume)
-  private bleService = inject(BleServiceService)
-  pression = toSignal(this.bleService.pressureSignal)
-  private playerService = inject(PlayerServiceService)
-  username = toSignal(this.playerService.usernameSignal)
-  difficulty = toSignal(this.playerService.difficultySignal)
-  sensibility = toSignal(this.playerService.pressureSetSignal)
+
+  private readonly soundService = inject(SoundServiceService)
+  private readonly bleService = inject(BleServiceService)
+  private readonly playerService = inject(PlayerServiceService)
+
+  readonly openMenu = signal<boolean>(false)
+  readonly openBle= signal<boolean>(false)
+  readonly openAudio = signal<boolean>(false)
+  readonly openPLayer = signal<boolean>(false)
+  readonly openDiff= signal<boolean>(false)
+  readonly audio = toSignal(this.soundService.volume)
+  readonly pression = toSignal(this.bleService.pressureSignal)
+  readonly username = toSignal(this.playerService.usernameSignal)
+  readonly difficulty = toSignal(this.playerService.difficultySignal)
+  readonly sensibility = toSignal(this.playerService.pressureSetSignal)
   @Output() fullScreen : EventEmitter<boolean> = new EventEmitter()
   @Output() resetGame : EventEmitter<boolean> = new EventEmitter()
-
-  constructor(){
-  }
 
 
   onDifficultyChange(event: Event) {
@@ -63,6 +63,9 @@ export class MenuComponent {
 
   onPouse(p:boolean){
     this.playerService.pouse(p)
+  }
+  click(){
+    this.soundService.playClickSound()
   }
 
 }

@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { OuthServiceService } from '../../service/outh-service.service';
-import { ErrorServiceService } from '../../service/error-service.service';
 
 @Component({
   selector: 'app-header',
@@ -11,15 +10,12 @@ import { ErrorServiceService } from '../../service/error-service.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-constructor(private router : Router,
-            private outHserveice : OuthServiceService,
-            private errorService : ErrorServiceService
-          
-){}
+  private readonly router = inject(Router)
+  private readonly outHserveice = inject(OuthServiceService)
 return(){
   if(this.outHserveice.username){
     this.outHserveice.logOut()
-    this.router.navigate(['/']);
+    this.router.navigate(['']);
   }
 }
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"strconv"
+
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
 	"progettoUni.com/mongo"
@@ -36,8 +38,9 @@ func main() {
 	api.Get("/generate", generateCode)
 	api.Post("/chekCode", chekCode)
 	api.Post("/saveSens", saveSens)
-	api.Get("/getSens", getSens)
-
+	api.Get("/getSens/{player}/{offset}/{limit}", getSens)
+	api.Get("/getStat/{player}", getStat)
+	api.Get("/getPlayer/{after}/{limit}", getPlayer)
 	app.Listen("0.0.0.0:8080")
 }
 
@@ -150,7 +153,7 @@ func chekCode(ctx iris.Context) {
 		ctx.JSON(err.Error())
 		return
 	}
-	if _ ,err:= Maps.IsCodeActive(c); err!= nil {
+	if err:= Maps.IsCodeActive(c); err!= nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
@@ -173,13 +176,12 @@ func saveSens(ctx iris.Context) {
 		return
 	}
 
-	u ,err := Maps.IsCodeActive(authHeader);
+	err := Maps.IsCodeActive(authHeader);
 	if err!= nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	s.Username = u
 	if err := Conn.SaveSens(s); err!= nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -204,14 +206,122 @@ func getSens(ctx iris.Context) {
 		ctx.JSON("Invalid authorization format, Bearer token expected")
 		return
 	}
+	player := ctx.Params().Get("player")
+	offsetStr := ctx.Params().Get("offset")
+	limitStr := ctx.Params().Get("limit")
 
-	err, username := token.ValidateJWT(t)
+	if offsetStr == "" || limitStr == ""  || player == ""{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid param")
+		return
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid offset parameter")
+		return
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid limit parameter")
+		return
+	}
+
+
+	err, _ = token.ValidateJWT(t)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	res, err := Conn.GetSens(username)
+	res, err := Conn.GetSens(player , offset , limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.JSON(res)
+}
+
+func getPlayer(ctx iris.Context) {
+	after := ctx.Params().Get("after")
+	limitStr := ctx.Params().Get("limit")
+
+	if limitStr == "" {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid param")
+		return
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid limit parameter")
+		return
+	}
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
+
+	var t string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
+		return
+	}
+	err, _ = token.ValidateJWT(t)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	res , err :=Conn.GetPlayersAfter(after,limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.JSON(res)
+}
+
+
+func getStat(ctx iris.Context) {
+	player := ctx.Params().Get("player")
+
+	if player == ""{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("Invalid param")
+		return
+	}
+
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
+
+	var t string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
+		return
+	}
+	err, _ := token.ValidateJWT(t)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	res , err :=Conn.GetStat(player)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())

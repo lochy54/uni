@@ -24,23 +24,30 @@ type User struct {
 }
 
 type pression struct {
-	Pression float64  `json:"pression" bson:"pression"`
-	Timestap int `json:"timestap" bson:"timestap"`
+	Pression float64 `json:"pression" bson:"pression"`
+	Timestap int     `json:"timestap" bson:"timestap"`
 }
 type SensRes struct {
-	Player string `json:"player" bson:"player"`
-	Username string `bson:"username"`
-	Press []pression `json:"pression" bson:"pression"` 
+	Player   string     `bson:"player"`
+	Press    []pression `json:"pression" bson:"pression"`
+}
+type gameStat struct {
+	MaxPression float64 `json:"maxPression"`
+	MinPression float64 `json:"minPression"`
 }
 
+type StatResult struct {
+	MaxPression float64    `json:"maxPression"`
+	MinPression float64    `json:"minPression"`
+	AvgPression float64    `json:"avgPression"`
+	Games       []gameStat `json:"games"`
+}
 
 type Connection struct {
 	database string
 	url      string
 	client   *mongo.Client
 }
-
-
 
 func CreateCLient(url string, database string) *Connection {
 	return &Connection{
@@ -131,7 +138,6 @@ func checkPassword(hashedPassword, password string) bool {
 	return err == nil
 }
 
-
 func (c *Connection) SaveSens(s SensRes) error {
 
 	session, err := c.client.StartSession()
@@ -161,15 +167,18 @@ func (c *Connection) SaveSens(s SensRes) error {
 	return nil
 }
 
-func (c *Connection) GetSens(u string) ([]SensRes, error) {
+func (c *Connection) GetSens(player string, offset, limit int, ) ([]SensRes, error) {
 	var res []SensRes
 	collection := c.client.Database(c.database).Collection("games")
-	cursor, err := collection.Find(context.TODO(), bson.M{"username": u})
+	filter := bson.M{"player": player}
+	opts := options.Find().
+		SetSkip(int64(offset)).
+		SetLimit(int64(limit))
+	cursor, err := collection.Find(context.TODO(), filter, opts)
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(context.TODO())
-
 	for cursor.Next(context.TODO()) {
 		var item SensRes
 		if err := cursor.Decode(&item); err != nil {
@@ -177,7 +186,6 @@ func (c *Connection) GetSens(u string) ([]SensRes, error) {
 		}
 		res = append(res, item)
 	}
-
 	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
@@ -185,3 +193,89 @@ func (c *Connection) GetSens(u string) ([]SensRes, error) {
 	return res, nil
 }
 
+func (c *Connection) GetPlayersAfter(afterPlayer string, limit int) ([]string, error) {
+	collection := c.client.Database(c.database).Collection("games")
+	filter := bson.M{
+		"player": bson.M{
+			"$gt": afterPlayer,
+		},
+	}
+	opts := options.Find().
+		SetSort(bson.D{{Key: "player", Value: 1}}).
+		SetLimit(int64(limit))
+
+	cursor, err := collection.Find(context.TODO(), filter, opts)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	playerSet := make(map[string]struct{})
+	var players []string
+
+	for cursor.Next(context.TODO()) {
+		var item SensRes
+		if err := cursor.Decode(&item); err != nil {
+			return nil, err
+		}
+		if _, seen := playerSet[item.Player]; !seen {
+			playerSet[item.Player] = struct{}{}
+			players = append(players, item.Player)
+		}
+	}
+
+	return players, cursor.Err()
+}
+
+func (c *Connection) GetStat(player string) (*StatResult, error) {
+	partite, err := c.GetSens(player, 0, 1000)
+	if err != nil {
+		return nil, err
+	}
+	var maxGlobal float64 = 0
+	var minGlobal  float64 =0
+	var count int = 0
+	var tot float64 = 0
+	var g []gameStat
+	for _, game := range partite {
+		var max float64 = -1
+		var min float64 = 1
+		for _, p := range game.Press {
+			if p.Pression != 0 {
+				if p.Pression > max {
+					max = p.Pression
+				}
+				if p.Pression < min {
+					min = p.Pression
+				}
+				tot += p.Pression
+				count++
+			}
+		}
+		if(max==-1 && min == -1){
+			continue
+		}
+		g = append(g, gameStat{
+			MaxPression: max,
+			MinPression: min,
+		})
+		if maxGlobal < max {
+			maxGlobal = max
+		}
+		if minGlobal> min {
+			minGlobal = min
+		}
+	}
+	if(count == 0){
+		tot = 0
+	}else{
+		tot = tot / float64(count)
+	}
+	return &StatResult{
+		MaxPression:  maxGlobal,
+		MinPression:  minGlobal,
+		AvgPression:   tot,
+		Games:      g,
+	}, nil
+
+}

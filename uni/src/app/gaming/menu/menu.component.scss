@@ -1,5 +1,6 @@
 
 .main-menu{
+    padding: 2vh;
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -13,28 +14,18 @@
     z-index: 200; 
 }
 
+h3{
+    padding: 0;
+    margin: 0;
+}
 
 
 .play-agane{
    position: absolute;
    display: flex;
    z-index: 400;
-    width: 100%;
-    top: 60%;
-    h1{
-        padding: 2vh;
-        padding-left: 5vw !important;
-        padding-right: 5vw !important;
-        background-color: white;
-        color: #8a2be2;
-        border-radius: 2vh;
-    }
-    h1:hover{
-        transform: scale(1.05);
-        background-color: #8a2be2;
-        color: white;
-        transition: transform 0.3s ease;
-    }
+width: 100%;
+   top: 60%;
    justify-content: center;
    align-items: center;
 }
@@ -42,6 +33,7 @@
 
 
 .play{
+    box-shadow: 0 2px 20px #9a38f5;
     color: #8a2be2;
     background-color: white;
     padding: 2vh;
@@ -72,15 +64,19 @@
     align-items: center;
     border-top-right-radius: 2vh;
     border-bottom-right-radius: 2vh;
-    width: max-content;
+    margin-right: 2vh;
+    width: auto;
+    box-shadow: 0 2px 20px #9a38f5;
     z-index: 100;
-    h2{
+    h3{
         height: 100%;
         align-content: center;
     }
+    gap: 1vh;
 }
 
 .play-form-open{
+    
     animation: openAnimation 0.5s forwards;
 }
 
@@ -103,6 +99,7 @@
 
 .show_close{
     display: none;
+    
 }
 .show{
     display: flex !important;
@@ -117,16 +114,7 @@
     position: absolute;
     background-color: #00000081;
     z-index: 150;
-    align-items: center;
     justify-content: center;
     display: flex;
     border-radius: 2vh;
-    h1{
-        font-size: 6rem;
-    }
-    @media (max-width: 900px) {
-        h1{
-            font-size:3rem;
-        }
-    }
 }

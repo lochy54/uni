@@ -1,36 +1,27 @@
 .game-over{
+    .play{
+        background-color: white;
+        color: #8a2be2;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        display: flex;
+        width: max-content;
+        padding: 2rem;
+        border-radius: 2vh;
+        box-shadow: 0 2px 20px #9a38f5;
+
+    }
     position: absolute;
     width: 90vw;
     height: 81vh;
     left: 0;
-    top: 0;
-    z-index: 1;
-    margin: 1vh;
-    border-radius: 2vh;
+    display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 2vh;
-    display: flex;
-    
-    h1 , .material-symbols-outlined{
-        font-size: 10rem;
-        margin-top: 2vh;
-        padding: 0;
-        margin: 0;
-    }
-    @media (max-width: 900px) {
-        h1 , .material-symbols-outlined{
-            font-size:3rem;
-        }
-    }
-    .play{
-        background-color: white;
-        color: #8a2be2;
-        padding: 2vh;
-        border-radius: 2vh;
-        cursor: pointer;
-
+    top: 0;
+    .material-symbols-outlined{
+        font-size: 4rem;
     }
 }
 

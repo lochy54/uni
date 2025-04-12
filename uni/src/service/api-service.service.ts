@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { debounce, debounceTime, Observable, of } from 'rxjs';
 
-export interface login {
+ export interface login {
   username : string
   password : string
 }
 
-export interface user {
+ export interface user {
 	name   :  string
 	surname : string 
 	username : string 
@@ -20,10 +20,6 @@ export interface sensibility {
   timestap : number
 }
 
-export interface playerSens {
-  player : string
-  pression : sensibility[]
-}
 
 
 const apiUrl = "/api"
@@ -55,8 +51,5 @@ export class ApiServiceService {
       Authorization: c}
     }); 
   }
-  getSens() : Observable<playerSens[]>{
-    return this.http.get<playerSens[]>(`${apiUrl}/getSens`);
-  }
-  
+
 }

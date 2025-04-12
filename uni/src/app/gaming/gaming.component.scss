@@ -1,16 +1,14 @@
 
-h1{
-    padding: 0;
-    margin: 0;
-}
 
 .game{
+    margin-top: 5vh;
+    margin-bottom: 5vh;
     border-radius: 2vh;
     margin-left: 5vw;
     width: 90vw;
     padding: 1vh;
     height: max-content;
-    box-shadow: 1vh 1vh 3vh #b96eff;
+    box-shadow: 0 2px 20px #9a38f5;
     color: white;
     background: linear-gradient(135deg, 
     #2f00ff,  /* Base Blue Violet */
@@ -31,18 +29,6 @@ animation: gradientAnimation 8s ease-in-out infinite alternate;
 
 
 
-
-
-.game-select-title{
-    background-color: white;
-    color: #8a2be2;
-    padding: 2vh;
-    width: 100%;
-    border-radius: 2vh;
-    height: fit-content;
-}
-
-
 .game-canvas{
     width: -webkit-fill-available;
     height: 80vh;
@@ -50,26 +36,54 @@ animation: gradientAnimation 8s ease-in-out infinite alternate;
     border-width: 0.5vh;
     border-style: solid;
     border-color: #000000;
+    overflow: hidden;
     background-color: #000000b9;
     }
-    
-.game-select-title{
-    margin-left: 15vw;
-    position: sticky;
-    margin-top: 3vh;
-    width: 70vw;
-    margin-bottom: 2vh;
-    z-index: 100;
-}
+.gamelist-header{
+    h3{
+        margin: 0;
+        padding: 0;
+    }
+    background-color: white;
+    padding: 1vh;
+    margin-left: 20vw;
+    margin-right: 20vw;
+    margin-bottom: 5vh;
+    margin-top: 5vh;
 
-.game-select-list{
-    padding-top: 2vh;
-    gap: 6vh;
-    justify-content: space-evenly;
-    height: 54vh ;
-    overflow-y: scroll;
+    color: #6900C0;
+    box-shadow: 0 2px 20px #9a38f5;
+    border-radius: 2vh;
+    font-size: 2rem;
+    text-align: center;
+
+}
+.gamelist{
+    height: 50vh;
+    padding-top: 5vh;
+    justify-content: center;
+    gap: 5vw;
     display: flex;
     flex-wrap: wrap;
-    -ms-overflow-style: none;  
-    scrollbar-width: none;  
+    overflow-y: scroll;
+}
+
+.gamelist::-webkit-scrollbar {
+    display: none;
+  }
+
+.game-v{
+    width: 300px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    border: white solid ;
+    border-radius: 2vh;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+
+}
+
+.game-v:hover{
+    transform: scale(1.2) ;
 }

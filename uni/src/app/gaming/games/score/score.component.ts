@@ -8,5 +8,5 @@ import { Component, input } from '@angular/core';
   styleUrl: './score.component.scss'
 })
 export class ScoreComponent {
-  score = input<number>(0)
+  readonly score = input<number>(0)
 }

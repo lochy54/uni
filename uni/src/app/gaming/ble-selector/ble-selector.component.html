@@ -1,23 +1,44 @@
 
+<div class="main-login-container">
 
-<div class="main-ble-container">
-    <div class="open-container">
-                <h2>Connect</h2>
-        <form [formGroup]="bleForm">
-  
-            <div class="input-container">
-                @if(!loading()){
-                    <button (click)="connect()">Connect to a device</button>
-                    }@else {
-                    <div class="spinner"></div>
-                    }
-                @if(bleForm.get('connected')?.invalid && bleForm.get('connected')?.value != undefined){
-                <small>non connesso</small>
-                }
-            </div>
-                <button  [disabled]="bleForm.invalid" (click)="start()">Play</button>
-        </form>
-    </div>
+    <p-card class="form-card right left">
+      <form [formGroup]="bleForm" (ngSubmit)="start()">
+
+          <!-- connect -->
+          @if(!loading()){
+
+          <p-inputgroup>
+
+              <p-inputgroup-addon>
+                  <span class="material-symbols-outlined icon">
+                    bluetooth
+                    </span>
+              </p-inputgroup-addon>
+            
+              <button pButton label="Connct to a device"  (click)="connect()"></button>
+          
+            </p-inputgroup>
+        }@else {
+            <p-progressSpinner strokeWidth="4" styleClass="p-ml-2" />
+        }
+            
+          @let connection = bleForm.get('connected');
+          @if (connection?.value != undefined && connection?.invalid) {
+              <p-message severity="error" text="Not connected"></p-message>
+          }
+          <!-- Submit -->
+          <div class="p-mt-4">
+
+              <button pButton type="submit" label="Play" [disabled]="bleForm.invalid"></button>
+          
+          </div>
+
+      </form>
+    </p-card>
+
 </div>
+
+
+
 
 

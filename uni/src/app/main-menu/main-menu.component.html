@@ -1,3 +1,5 @@
+<app-header ></app-header>
+<p-toast></p-toast>
 <div class="main-menu-container">
     <div class="username">
         <div class="welcome">
@@ -10,19 +12,8 @@
             </div>
         </div>
     </div>
-
-    <div class="stats">
-        @for (item of stats(); track $index) {
-      <div class="game">
-        <div class="header">{{item.player}}</div>
-        <apx-chart
-        [series]="chartOptions.series"
-        [chart]="chartOptions.chart"
-        [xaxis]="chartOptions.xaxis"
-        [title]="chartOptions.title">
-      </apx-chart>
-      </div>
-    }
-    </div>
     
+    <div class="search"><input type="text"></div>
+
 </div>
+<app-footer></app-footer>

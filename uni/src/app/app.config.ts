@@ -4,14 +4,27 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { HttpEvent, HttpHandler, HttpHandlerFn, HttpRequest, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }),  provideRouter(routes), provideHttpClient(withInterceptors([tokenInterceptor])), ]
-};
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }),  provideRouter(routes), provideHttpClient(withInterceptors([tokenInterceptor])), 
+
+  provideAnimationsAsync(),
+  providePrimeNG({
+      theme: {
+          preset: Aura
+      }
+  }),
+  MessageService
+]
+};  
 
 
 export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
-  const targetEndpoints = ['/generate','/chekToken','/getSens']; 
+  const targetEndpoints = ['/generate','/chekToken','/getSens','/getStat','/getPlayer']; 
   if (targetEndpoints.some(endpoint => req.url.includes(endpoint))) {
     console.log("Interceptor called with URL:", req.url); 
     const token = localStorage.getItem('token');
@@ -26,3 +39,4 @@ export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
   }
   return next(req);
 }
+

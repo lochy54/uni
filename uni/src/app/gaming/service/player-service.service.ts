@@ -1,9 +1,8 @@
-import { Injectable, signal } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, CanActivateChild, GuardResult, MaybeAsync, NavigationEnd, Params, Router, RouterStateSnapshot } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import {  ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { ApiServiceService, sensibility } from '../../../service/api-service.service';
-import { BehaviorSubject, filter, Observable, of, ReplaySubject, switchMap } from 'rxjs';
-import { SoundServiceService } from './sound-service.service';
-import { ErrorServiceService } from '../../../service/error-service.service';
+import { BehaviorSubject, catchError, filter, map, Observable, of, ReplaySubject } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 
 
@@ -12,33 +11,41 @@ import { ErrorServiceService } from '../../../service/error-service.service';
 })
 export class PlayerServiceService implements CanActivate{
   
+  private readonly router = inject(Router)
+  private readonly apiService = inject(ApiServiceService)
+  private readonly errorService= inject(MessageService)
+
   private gameCode : string = ""
-  private _username  : ReplaySubject<string> = new ReplaySubject(1)
-  private _pressureSet: BehaviorSubject<number> = new BehaviorSubject(1);
-  private _difficulty  : BehaviorSubject<number> = new BehaviorSubject(2);
-  private _pouse  : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  constructor(
-    private apiService : ApiServiceService,private router : Router, private errorService : ErrorServiceService
-  ) { 
+  private readonly _username  : ReplaySubject<string> = new ReplaySubject(1)
+  private readonly _pressureSet: BehaviorSubject<number> = new BehaviorSubject(1);
+  private readonly _difficulty  : BehaviorSubject<number> = new BehaviorSubject(2);
+  private readonly _pouse  : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  }
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
     const params = route.params;
     this.gameCode = params["code"] || "";
-    this._username.next(params["username"] || "")
-
+    this._username.next(params["username"] || "");
+  
     if (!params["username"]) {
       this.router.navigate(['/']);
       return false;
     }
-    this.apiService.isCodeActive(this.gameCode).subscribe({
-      error : (_)=> {
-        this.router.navigate(['/']);
-      }, 
-  })
-  return true
-}
+  
+    return this.apiService.isCodeActive(this.gameCode).pipe(
+      map(() => true),
+      catchError((err) => {
+        this.errorService.add(({ severity: 'error', summary: 'Error', detail: err.error}));
+        this.router.navigateByUrl("");
+        return of(false);
+      })
+    );
+  }
+
+
+
+
 
 pouse(k : boolean){
   this._pouse.next(k)
@@ -68,13 +75,12 @@ public get pouseSignal() {
 
 
 savePression( p : sensibility[]){
-  this._username.subscribe((val) => {
-    this.apiService.saveSens(p, this.gameCode , val).subscribe({
-      error : (error)=> {
-        this.errorService.setError(error.error)
-      }, 
-    })
-    }
-  )
+  let username : string|undefined 
+  this._username.subscribe((val)=>username = val)
+  this.apiService.saveSens(p, this.gameCode , username!).subscribe({
+    error : (error)=> {
+      this.errorService.add(({ severity: 'error', summary: 'Error', detail: error.error}));
+    }, 
+  })
 }
 }

@@ -5,18 +5,18 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SoundServiceService {
-  private click = new Audio('./sound/click.wav');
-  private loopMain = new Audio('./sound/loopMain.mp3');
-  private start = new Audio('./sound/start.mp3');
-  private connected = new Audio('./sound/connected.mp3');
-  private loopGame = new Audio('./sound/loopGame.mp3'); 
-  private die = new Audio('./sound/die.mp3');
-  private animation = new Audio('./sound/animation.mp3');
+  private readonly click = new Audio('./sound/click.wav');
+  private readonly loopMain = new Audio('./sound/loopMain.mp3');
+  private readonly start = new Audio('./sound/start.mp3');
+  private readonly connected = new Audio('./sound/connected.mp3');
+  private readonly loopGame = new Audio('./sound/loopGame.mp3'); 
+  private readonly die = new Audio('./sound/die.mp3');
+  private readonly animation = new Audio('./sound/animation.mp3');
 
-  private volumeS: number = 0.1;
-  private volumeA: number = 0.3;
+  private  volumeS: number = 0.1;
+  private  volumeA: number = 0.3;
 
-  private _volume : BehaviorSubject<{
+  private readonly _volume : BehaviorSubject<{
     volumeS : number,
      volumeA: number
   }> = new BehaviorSubject({

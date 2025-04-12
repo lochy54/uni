@@ -37,23 +37,22 @@ export class FlappyComponent implements AfterViewInit {
 
 
   // Game state
-  points = signal<number>(0);
-  gameOver = signal<boolean>(true);
+  readonly points = signal<number>(0);
+  readonly gameOver = signal<boolean>(true);
   private sens! : sensibility[]
   private startDate! : number 
   // Services
-  private bleService = inject(BleServiceService);
-
-  private playerService = inject(PlayerServiceService);
-  private soundService = inject(SoundServiceService)
+  private readonly bleService = inject(BleServiceService);
+  private readonly playerService = inject(PlayerServiceService);
+  private readonly soundService = inject(SoundServiceService)
   // Signal values
-  private rawDifficulty = toSignal(this.playerService.difficultySignal);
-  private difficulty = computed(() =>
+  private readonly rawDifficulty = toSignal(this.playerService.difficultySignal);
+  private readonly difficulty = computed(() =>
     this.rawDifficulty()! * (this.canvas.nativeElement.width / 800)
   ); 
-  private pressure = toSignal(this.playerService.pressureSetSignal);
-  private pause = toSignal(this.playerService.pouseSignal);
-  private pression = toSignal(this.bleService.pressureSignal);
+  private readonly pressure = toSignal(this.playerService.pressureSetSignal);
+  private readonly pause = toSignal(this.playerService.pouseSignal);
+  private readonly pression = toSignal(this.bleService.pressureSignal);
 
   // Canvas context
   private context!: CanvasRenderingContext2D;
@@ -62,10 +61,12 @@ export class FlappyComponent implements AfterViewInit {
   private bird!: Element;
   private back!: Element[];
   private pillars!: Element[] ;
+  private readonly pg: HTMLImageElement = new Image();
+  private readonly pillarImg: HTMLImageElement = new Image();
+  private readonly backgorund : HTMLImageElement = new Image()
+
+
   
-  private pg: HTMLImageElement = new Image();
-  private pillarImg: HTMLImageElement = new Image();
-  private backgorund : HTMLImageElement = new Image()
   constructor() {
 
         effect(()=>{

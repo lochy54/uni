@@ -1,18 +1,13 @@
 
-<app-toaster-error></app-toaster-error>
 <app-header></app-header>
+<p-toast></p-toast>
 <div class="main-container">
-
-    @if(!username()){
-            <app-login></app-login>
+            <app-login-register></app-login-register>
+            @if(isWideScreen()){
+            <p-divider layout="vertical"><b>PLAY</b></p-divider>
+            }@else {
+            <p-divider layout="horizontal"><b>PLAY</b></p-divider>
+            }
             <app-play></app-play>
-
-    
-    }@else {
-        <app-main-menu></app-main-menu>
-    }
-    
-
-
 </div>
 <app-footer></app-footer>

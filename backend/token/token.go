@@ -24,11 +24,11 @@ func CreateMaps() *Token {
 }
 
 
-func (m *Token) IsCodeActive(c string) ( string , error) {
-	if k, exists := m.codes[c]; exists {
-		return  k.username , nil
+func (m *Token) IsCodeActive(c string) error {
+	if _, exists := m.codes[c]; exists {
+		return   nil
 	}
-	return "" , fmt.Errorf("code not active")
+	return  fmt.Errorf("code not active")
 }
 
 

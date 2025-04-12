@@ -1,33 +1,39 @@
-<app-toaster-error></app-toaster-error>
 <app-header></app-header>
+<p-toast></p-toast>
 @if(!chakLandsapeMode()){
 <app-landscape></app-landscape>
 
 }@else{
 <div class="main-container" #fullscreenDiv>
     <div class="game">
-        @if(gameSelect()!=undefined){
-            <app-menu (fullScreen)="toggleFullscreen()" 
-            (resetGame)="gameSelect.set(0)"
-            ></app-menu>
-        }
-                @switch (gameSelect()) {
-                    @case (undefined) {
-                        <app-ble-selector class="game-canvas" style="display: flex;" (Start)="gameSelect.set(0)"></app-ble-selector>
-                    }
-                    @case (0) {
-                        <div class="game-canvas">
-                            <div class="game-select-title"><h1> SELECT GAME</h1></div>
-                            <div class="game-select-list">
-                            <app-game-cover [name]="'falppy'" [pso]="1" [logo]="'game-logo/flappy.png'" (selected)="gameSelect.set($event)"></app-game-cover>
+        <div class="game-canvas">
 
-                            </div>
+            @if(gameSelect()!=undefined){
+            <app-menu (fullScreen)="toggleFullscreen()" (resetGame)="gameSelect.set(0)"></app-menu>
+            }
+
+            @switch (gameSelect()) {
+            @case (undefined) {
+            <app-ble-selector (Start)="gameSelect.set(0)"></app-ble-selector>
+            }
+            @case (0) {
+                <div class="gamelist-header"><h3>Select Game</h3></div>
+                <div class="gamelist">
+                    @for (item of games; track $index) {
+                    <div class="game-v" [style.backgroundImage]="'url(' + item.logo + ')'"
+                    (click)="play($index+1)"
+                    >
+                        
                     </div>
                     }
-                    @case (1) {
-                        <app-flappy class="game-canvas" style="display: flex;"></app-flappy>
-                    }
-                }
+                </div>
+            }
+            @case (1) {
+            <app-flappy></app-flappy>
+            }
+            }
+        </div>
+
     </div>
 
 

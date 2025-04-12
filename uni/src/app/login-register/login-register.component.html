@@ -1,0 +1,224 @@
+<div class="main-login-container">
+
+    <!-- Switch to Register Icon -->
+    <div class="icon-container left"[class.main-login-close]="switchLogin()"  [class.main-login-open]="!switchLogin()">
+      <span class="material-symbols-outlined icon-button" (click)="switchLogin.set(true)">how_to_reg</span>
+    </div>
+
+    <!-- REGISTER FORM -->
+      <p-card class="form-card left" header="Register"
+       [class.main-login-open]="switchLogin()"
+        [class.main-login-close]="!switchLogin() "   
+            
+>
+        <form [formGroup]="registerForm" (ngSubmit)="register()">
+  
+            <!-- Username -->
+            <p-inputgroup>
+            <p-inputgroup-addon>
+                <span class="material-symbols-outlined icon">
+                    person
+                  </span>
+            </p-inputgroup-addon>
+            <p-floatlabel variant="on">
+                <input id="username1" type="username" pInputText formControlName="username" 
+                />
+                <label for="username1">Username</label>
+            </p-floatlabel>
+            </p-inputgroup>
+            @let usernameControl = registerForm.get('username');
+            @if (usernameControl?.touched && usernameControl?.invalid) {
+              @if (usernameControl?.hasError('required')) {
+                <p-message severity="error" text="Username is required"></p-message>
+              }
+              @if (usernameControl?.hasError('minlength')) {
+                <p-message severity="warn" text="Min 3 characters"></p-message>
+              }
+              @if (usernameControl?.hasError('maxlength')) {
+                <p-message severity="warn" text="Max 20 characters"></p-message>
+              }
+            }
+  
+            <!-- Password -->
+            <p-inputgroup>
+                <p-inputgroup-addon>
+                    <span class="material-symbols-outlined icon">
+                        password
+                        </span>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                    <input pPassword inputId="password1" formControlName="password" toggleMask="false" [showPassword]="visibility()" 
+                    />
+                    <label for="password1">Password</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    @if(visibility()){
+                      <span class="material-symbols-outlined icon" (click)="visibility.set(false)" style="cursor: pointer;">
+                        visibility
+                        </span>
+                    }@else {
+                      <span class="material-symbols-outlined icon"(click)="visibility.set(true)" style="cursor: pointer;">
+                        visibility_off
+                        </span>
+                    }
+                  </p-inputgroup-addon>
+            </p-inputgroup>
+            @let passwordControl = registerForm.get('password');
+            @if (passwordControl?.touched && passwordControl?.invalid) {
+              @if (passwordControl?.hasError('required')) {
+                <p-message severity="error" text="Password is required"></p-message>
+              }
+              @if (passwordControl?.hasError('minlength')) {
+                <p-message severity="warn" text="Min 6 characters"></p-message>
+              }
+            }
+  
+            <!-- Name -->
+            <p-inputgroup>
+                <p-inputgroup-addon>
+                    <span class="material-symbols-outlined icon">
+                        id_card
+                      </span>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                    <input id="name" pInputText formControlName="name" />
+                    <label for="name">Name</label>
+                </p-floatlabel>
+                </p-inputgroup>
+            @let nameControl = registerForm.get('name');
+            @if (nameControl?.touched && nameControl?.hasError('required')) {
+              <p-message severity="error" text="Name is required"></p-message>
+            }
+  
+            <!-- Surname -->
+            <p-inputgroup>
+                <p-inputgroup-addon>
+                    <span class="material-symbols-outlined icon">
+                        signature
+                      </span>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                    <input id="surname" pInputText formControlName="surname" />
+                    <label for="surname">surname</label>
+                </p-floatlabel>
+                </p-inputgroup>
+            @let surnameControl = registerForm.get('surname');
+            @if (surnameControl?.touched && surnameControl?.hasError('required')) {
+              <p-message severity="error" text="Surname is required"></p-message>
+            }
+  
+            <!-- Accept -->
+            
+            <div >
+              <p-checkbox inputId="accept1" formControlName="accept" binary="true" />
+              <label for="accept1" style="margin-left: 2vw;">
+                <a href="https://www.garanteprivacy.it/regolamentoue" target="_blank">Accept service</a>
+              </label>
+            </div>
+            @let acceptControl = registerForm.get('accept');
+            @if (acceptControl?.touched && acceptControl?.hasError('required')) {
+              <p-message severity="error" text="You must accept the terms"></p-message>
+            }
+  
+            <!-- Submit -->
+            <div class="p-mt-4">
+              @if (!loading()) {
+                <button pButton type="submit" label="Register" [disabled]="registerForm.invalid"></button>
+              } @else {
+                <p-progressSpinner strokeWidth="4" styleClass="p-ml-2" />
+              }
+            </div>
+  
+        </form>
+      </p-card>
+    
+  
+    <!-- LOGIN FORM -->
+
+      <p-card class="form-card right" header="Login" 
+      [class.main-login-open]="switchLogin()" 
+      [class.main-login-close]="switchLogin()"
+      >
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+  
+            <!-- Username -->
+            <p-inputgroup>
+                <p-inputgroup-addon>
+                    <span class="material-symbols-outlined icon">
+                        person
+                      </span>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                    <input id="username2" type="username" pInputText formControlName="username" 
+                    />
+                    <label for="username2">Username</label>
+                </p-floatlabel>
+                </p-inputgroup>
+            @let loginUser = loginForm.get('username');
+            @if (loginUser?.touched && loginUser?.invalid) {
+              @if (loginUser?.hasError('required')) {
+                <p-message severity="error" text="Username is required"></p-message>
+              }
+              @if (loginUser?.hasError('minlength')) {
+                <p-message severity="warn" text="Min 3 characters"></p-message>
+              }
+              @if (loginUser?.hasError('maxlength')) {
+                <p-message severity="warn" text="Max 20 characters"></p-message>
+              }
+            }
+  
+            <!-- Password -->
+            <p-inputgroup>
+                <p-inputgroup-addon>
+                    <span class="material-symbols-outlined icon">
+                        password
+                        </span>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                    <input pPassword inputId="password2" formControlName="password" [feedback]="false" toggleMask="false" [showPassword]="visibility()" 
+                    />
+                    <label for="password2">Password</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    @if(visibility()){
+                      <span class="material-symbols-outlined icon" (click)="visibility.set(false)">
+                        visibility
+                        </span>
+                    }@else {
+                      <span class="material-symbols-outlined icon"(click)="visibility.set(true)">
+                        visibility_off
+                        </span>
+                    }
+                  </p-inputgroup-addon>
+            </p-inputgroup>
+            @let loginPass = loginForm.get('password');
+            @if (loginPass?.touched && loginPass?.invalid) {
+              @if (loginPass?.hasError('required')) {
+                <p-message severity="error" text="Password is required"></p-message>
+              }
+              @if (loginPass?.hasError('minlength')) {
+                <p-message severity="warn" text="Min 6 characters"></p-message>
+              }
+            }
+  
+            <!-- Submit -->
+            <div class="p-mt-4">
+              @if (!loading()) {
+                <button pButton type="submit" label="Login" [disabled]="loginForm.invalid"></button>
+              } @else {
+                <p-progressSpinner strokeWidth="4" styleClass="p-ml-2" />
+              }
+            </div>
+  
+        </form>
+      </p-card>
+
+  
+    <!-- Switch to Login Icon -->
+
+    <div class="icon-container right" [class.main-login-close]="!switchLogin()"  [class.main-login-open]="switchLogin()">
+      <span class="material-symbols-outlined icon-button" (click)="switchLogin.set(false)">login</span>
+    </div>
+
+  </div>
+  

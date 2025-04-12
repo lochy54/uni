@@ -1,40 +1,51 @@
 import { Component, computed, effect, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { BleSelectorComponent } from "./ble-selector/ble-selector.component";
-import { ToasterErrorComponent } from "../toaster-error/toaster-error.component";
 import { BleServiceService } from './service/ble-service.service';
 import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { LandscapeComponent } from "./landscape/landscape.component";
-import { GameCoverComponent } from "./game-cover/game-cover.component";
 import { FlappyComponent } from "./games/flappy/flappy.component";
 import { SoundServiceService } from './service/sound-service.service';
 import { MenuComponent } from "./menu/menu.component";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PlayerServiceService } from './service/player-service.service';
+import { FormsModule } from '@angular/forms';
+import { DataViewModule } from 'primeng/dataview';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-gaming',
   standalone: true,
-  imports: [BleSelectorComponent, ToasterErrorComponent, HeaderComponent, FooterComponent, LandscapeComponent, GameCoverComponent, MenuComponent, FlappyComponent],
+  imports: [BleSelectorComponent, HeaderComponent, FooterComponent, LandscapeComponent, MenuComponent, FlappyComponent,  
+    CardModule, ButtonModule,Toast],
   templateUrl: './gaming.component.html',
   styleUrl: './gaming.component.scss'
 })
 export class GamingComponent {
+
+  games = [
+    { name: 'Flappy', logo: 'game-logo/flappy.png', pso: 1 },
+  ];
+  
+
+
   @ViewChild('fullscreenDiv') fullscreenDiv!: ElementRef;
-  private playerService = inject(PlayerServiceService)
-  pause = toSignal(this.playerService.pouseSignal)
-  gameSelect = signal<number|undefined>(undefined)
-  private bleService = inject(BleServiceService)
-  pression = toSignal(this.bleService.pressureSignal)
-  chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight})
+  private readonly playerService = inject(PlayerServiceService)
+  private readonly soundService = inject(SoundServiceService)
+  private readonly bleService = inject(BleServiceService)
+
+  readonly pause = toSignal(this.playerService.pouseSignal)
+  readonly gameSelect = signal<number|undefined>(0)
+  readonly pression = toSignal(this.bleService.pressureSignal)
+  readonly chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight})
+
   constructor(
-        private soundService : SoundServiceService, 
   ) {
-
-
     effect(()=>{
       if(this.pression()==undefined){
-        this.gameSelect.set(undefined)
+        this.gameSelect.set(0)
         this.playerService.pouse(false)
       }
     },{allowSignalWrites:true})
@@ -55,6 +66,11 @@ export class GamingComponent {
     } else {
       document.exitFullscreen();
     }
+  }
+
+  play(n : number){
+    this.soundService.playClickSound()
+    this.gameSelect.set(n)
   }
 
 }
