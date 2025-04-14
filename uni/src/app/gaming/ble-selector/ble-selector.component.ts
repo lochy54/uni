@@ -1,8 +1,8 @@
 import { Component, computed, effect, EventEmitter, inject, Output, signal } from '@angular/core';
-import { BleServiceService } from '../service/ble-service.service';
+import { BleServiceService } from '../../../service/ble-service.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { SoundServiceService } from '../service/sound-service.service';
+import { SoundServiceService } from '../../../service/sound-service.service';
 import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';

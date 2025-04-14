@@ -1,19 +1,168 @@
 <app-header ></app-header>
 <p-toast></p-toast>
 <div class="main-menu-container">
-    <div class="username">
-        <div class="welcome">
-            <h1>Welcome {{ username() }}</h1>
-        </div>
-        <div class="generate-code">
-            <button (click)="generateCode()">Generate Code</button>
-            <div class="code" [class.openCode]="showCode()" [class.closeCode]="!showCode()">
-               {{ showCode()}}
-            </div>
-        </div>
-    </div>
-    
-    <div class="search"><input type="text"></div>
 
+  <div class="main-code">
+    <p-card class="form-card left right" [header]="'Welcome '+ username()">
+      @if(!loading()) {
+
+      <p-inputgroup>
+       
+        <p-inputgroup-addon>
+          <span class="material-symbols-outlined">
+            vpn_key
+            </span>
+        </p-inputgroup-addon>
+  
+        
+          <button pButton label="Generate a code" (click)="generateCode()"></button>
+    
+      </p-inputgroup>
+    } @else {
+      <p-progressSpinner strokeWidth="4" styleClass="p-ml-2" />
+    }
+
+    @if(code()) {
+        <h1>{{code()}}</h1>
+        <h2>Valid: {{ getDate() }}</h2>
+    }
+
+  </p-card>
+  
+ 
+  </div>
+  
+    
+    <div class="players">
+        <p-table 
+        #dt2
+        [value]="player()" 
+        [paginator]="true"
+        [rows]="10" 
+        [lazy]="true"
+        [totalRecords]="countPlayer()"
+        [loading]="loadingPlayer()"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [globalFilterFields]="['name']"
+        stripedRows 
+
+        (onLazyLoad)="loadPlayers($event)"
+        >
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="head">
+
+        
+
+
+             <p-inputgroup>
+              <p-inputgroup-addon>
+                  <span class="material-symbols-outlined icon">
+                      person
+                    </span>
+              </p-inputgroup-addon>
+              <p-floatlabel variant="in">
+                <input
+                pInputText
+                type="text"
+                (input)="dt2.filterGlobal(filter($event.target), 'contains')"
+                id="player"
+               />
+                  <label for="player">Player</label>
+              </p-floatlabel>
+              </p-inputgroup>
+
+            </th>
+           
+          </tr>
+        </ng-template>
+      
+        <ng-template pTemplate="body" let-player>
+          <tr>
+            <td class="end td-noborder">{{ player.name }}
+             
+                <span class="material-symbols-outlined" (click)="open(player.position)">
+                  @if(!player.status){
+                open_in_full
+                  }@else{
+                close_fullscreen
+                  }
+            </span>
+          
+          
+          </td>
+          </tr>
+          @if(player.status){
+              <tr>
+                <td class="td-noborder">
+                  <div class="players">
+
+                    <p-table 
+                    [value]="[stat()]" 
+                    [lazy]="true"
+                    [totalRecords]="countGames()"
+                    [loading]="loadingStat()"
+                    (onLazyLoad)="loadStat(player.name)"
+                    >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th class="head">
+                          <div class="stat">
+                            @if(stat()){
+                            <div class="inner-stat">Max Pressure: {{stat()!.maxPressure}}kg</div>
+                            <div class="inner-stat">Max Pressure Duration: {{stat()!.maxPressureDuration/1000}}s</div>
+                            <div class="inner-stat">Total Games: {{stat()!.totalGames}}</div>
+                            }
+                          </div>
+                          
+                          </th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-st>
+                      <td>
+                        <p-chart type="bar" [data]="st.data" [options]="st.options" height="300px" width="100%"/>
+                      </td>
+                    </ng-template>  
+                  </p-table>
+
+                  </div>
+                </td>
+              </tr>
+          
+            <tr>
+                <td class="">
+                  <div class="players">
+            <p-table 
+            [value]="games()" 
+            [paginator]="true"
+            [rows]="3" 
+            [lazy]="true"
+            [totalRecords]="countGames()"
+            [loading]="loadingGame()"
+            [rowsPerPageOptions]="[3, 5, 10]"
+    
+            (onLazyLoad)="loadGame($event, player.name)"
+            >
+            <ng-template pTemplate="header">
+                <tr>
+                  <th class="head">Last Games</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-game>
+                <tr>
+                    <td class="td-noborder" >
+                        <p-chart type="line" [data]="game.data" [options]="game.options" height="300px" width="100%"/>
+                    </td>
+                </tr>
+              </ng-template>
+            </p-table>
+                  </div>
+        </td>
+        </tr>
+          }
+        </ng-template>
+      </p-table>
+    </div>
 </div>
 <app-footer></app-footer>

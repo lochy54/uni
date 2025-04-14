@@ -15,9 +15,27 @@ import { debounce, debounceTime, Observable, of } from 'rxjs';
 	password : string 
 }
 
-export interface sensibility {
+export interface game {
   pression : number 
   timestap : number
+}
+
+interface countGame {
+  res : game[][]
+  count : number
+}
+
+interface countPlayer {
+  res : string[]
+  count : number
+}
+
+
+export interface playerStats {
+	maxPressure    :    number
+	maxPressureDuration : number
+	maxPressureLast     : number[]
+	totalGames         : number
 }
 
 
@@ -46,10 +64,25 @@ export class ApiServiceService {
   isCodeActive(code : string) : Observable<any> {
     return this.http.post<any>(`${apiUrl}/chekCode`, JSON.stringify(code)); 
   }
-  saveSens(s : sensibility[], c : string, p : string) : Observable<any> {
-    return this.http.post<any>(`${apiUrl}/saveSens`, JSON.stringify({ "player" : p , "pression" : s}),{headers: {
+  saveSens(s : game[], c : string, p : string) : Observable<any> {
+    return this.http.post<any>(`${apiUrl}/saveSens/${p}`, JSON.stringify(s),{headers: {
       Authorization: c}
     }); 
   }
+  getPlayerNames(limit : number , index : number, filter : string | string[] | undefined ) : Observable<countPlayer> {
+    if(filter){
+      return this.http.get<countPlayer>(`${apiUrl}/getPlayerNames/${limit}/${index}/${filter}`); 
+    }
+    return this.http.get<countPlayer>(`${apiUrl}/getPlayerNames/${limit}/${index}`); 
+  }
+  getPlayerGamesByName(limit : number , index : number, player : string) : Observable<countGame> {
+    return this.http.get<countGame>(`${apiUrl}/getPlayerGamesByName/${player}/${limit}/${index}`); 
+  }
+  getPlayerStats(player : string) : Observable<playerStats> {
+    return this.http.get<playerStats>(`${apiUrl}/getPlayerStats/${player}`); 
+  }
+   
+
+
 
 }

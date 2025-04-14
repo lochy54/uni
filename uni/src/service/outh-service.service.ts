@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ApiServiceService, login, user} from './api-service.service';
-import { catchError, map, Observable, of, ReplaySubject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, ReplaySubject, switchMap, take, tap, throwError } from 'rxjs';
 import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from '@angular/router';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, R
 
 
 export class OuthServiceService implements CanActivate {
-  private readonly _username : ReplaySubject< string | undefined> = new ReplaySubject(1)
+  private readonly _username = new BehaviorSubject<string | undefined>(undefined);
   private readonly router = inject(Router)
   private readonly apiService = inject(ApiServiceService)
   get username() : Observable<string | undefined> {
@@ -18,21 +18,15 @@ export class OuthServiceService implements CanActivate {
   }
 
   
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let username : string|undefined 
-    this._username.subscribe((val)=>username = val)
-    if(username){
-        this._username.next(username)
-        return true
-    }
-    return this.apiService.chekToken().pipe(
-      tap((res) => {this._username.next(res)}),
-      map(() => true),
-      catchError(() => {
-        this.router.navigateByUrl("")
-        return of(false)})
-    )
-}
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    return this.username.pipe(
+      switchMap(username => {
+        if (username) {
+          return of(true);
+        }
+        return this.chekToken()
+      }))
+  }
 
 
   logOut(){
@@ -57,6 +51,17 @@ export class OuthServiceService implements CanActivate {
       tap(value => {
         localStorage.setItem("token", value);
         this._username.next(u.username)
+      })
+    );
+  }
+
+  private chekToken(){
+    return this.apiService.chekToken().pipe(
+      tap(res => this._username.next(res)),
+      map(() => true),
+      catchError(() => {
+        this.router.navigateByUrl("");
+        return of(false);
       })
     );
   }

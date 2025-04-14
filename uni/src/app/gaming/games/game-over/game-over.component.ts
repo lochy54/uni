@@ -1,6 +1,6 @@
 import { Component, effect, EventEmitter, inject, Output, signal } from '@angular/core';
-import { SoundServiceService } from '../../service/sound-service.service';
-import { PlayerServiceService } from '../../service/player-service.service';
+import { SoundServiceService } from '../../../../service/sound-service.service';
+import { PlayerServiceService } from '../../../../service/player-service.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({

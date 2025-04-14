@@ -1,14 +1,14 @@
 import { Component, computed, effect, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { BleSelectorComponent } from "./ble-selector/ble-selector.component";
-import { BleServiceService } from './service/ble-service.service';
+import { BleServiceService } from '../../service/ble-service.service';
 import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { LandscapeComponent } from "./landscape/landscape.component";
 import { FlappyComponent } from "./games/flappy/flappy.component";
-import { SoundServiceService } from './service/sound-service.service';
+import { SoundServiceService } from '../../service/sound-service.service';
 import { MenuComponent } from "./menu/menu.component";
 import { toSignal } from '@angular/core/rxjs-interop';
-import { PlayerServiceService } from './service/player-service.service';
+import { PlayerServiceService } from '../../service/player-service.service';
 import { FormsModule } from '@angular/forms';
 import { DataViewModule } from 'primeng/dataview';
 import { ButtonModule } from 'primeng/button';

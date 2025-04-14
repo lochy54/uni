@@ -17,7 +17,7 @@ import { Toast } from 'primeng/toast';
   styleUrl: './defoult-page.component.scss'
 })
 export class DefoultPageComponent {
-  isWideScreen = signal<boolean>(window.innerWidth > window.innerHeight+300)
+  readonly isWideScreen = signal<boolean>(window.innerWidth > window.innerHeight+300)
   @HostListener('window:resize', [])
   onResize() {
     this.isWideScreen.set(window.innerWidth > window.innerHeight+300)

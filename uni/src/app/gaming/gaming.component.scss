@@ -40,21 +40,18 @@ animation: gradientAnimation 8s ease-in-out infinite alternate;
     background-color: #000000b9;
     }
 .gamelist-header{
-    h3{
+    h2{
         margin: 0;
         padding: 0;
     }
     background-color: white;
-    padding: 1vh;
+    padding: 1.5vh;
     margin-left: 20vw;
     margin-right: 20vw;
-    margin-bottom: 5vh;
-    margin-top: 5vh;
-
+    margin-top: 2vw;
     color: #6900C0;
     box-shadow: 0 2px 20px #9a38f5;
     border-radius: 2vh;
-    font-size: 2rem;
     text-align: center;
 
 }

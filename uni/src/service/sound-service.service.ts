@@ -16,10 +16,7 @@ export class SoundServiceService {
   private  volumeS: number = 0.1;
   private  volumeA: number = 0.3;
 
-  private readonly _volume : BehaviorSubject<{
-    volumeS : number,
-     volumeA: number
-  }> = new BehaviorSubject({
+  private readonly _volume  = new BehaviorSubject({
     volumeA : this.volumeA*10,
     volumeS : this.volumeS*10
   })

@@ -1,44 +1,42 @@
-
 .footer-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: #8A2BE2;
-    color: white;
-    box-shadow: 0 2px 20px #9a38f5;
-    flex-wrap: wrap;
-  }
-  
-  .footer-logo {
-    max-height: 200px;
-    width: auto;
-  }
-  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: #8A2BE2;
+  color: white;
+  box-shadow: 0 2px 20px #9a38f5;
+  padding: 20px; /* Add some padding for spacing */
+}
+
+.footer-logo {
+  max-width: 50vw;
+  max-height: 200px;
+  margin: 10px;
+}
+
+.footer-description {
+  max-width: 400px;
+  text-align: right;
+  align-self: center;
+  padding: 10px;
+}
+
+.footer-text {
+  margin: 0;
+}
+
+.footer-copy {
+  font-size: 0.8em; /* Smaller text for the copyright notice */
+}
+
+@media (max-width: 950px) {
   .footer-description {
-    margin-left: 1.5rem;
-    max-width: 600px;
+    text-align: center !important;
+    margin-bottom: 10px; /* Space between text and logo */
   }
-  
-  .footer-text {
-    margin: 0;
-    font-size: 1rem;
+
+  .footer-logo {
+    max-width: 80vw; /* Make logo a bit smaller on mobile */
+    max-height: 150px; /* Keep logo proportionally smaller */
   }
-  
-  .footer-copy {
-    margin: 0.5rem 0 0 0;
-    font-size: 0.85rem;
-  }
-  
-  @media (max-width: 768px) {
-    .footer-container {
-      flex-direction: column;
-      text-align: center;
-    }
-  
-    .footer-description {
-      margin-left: 0;
-      margin-top: 1rem;
-    }
-  }
-  
+}

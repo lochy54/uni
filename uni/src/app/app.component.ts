@@ -1,6 +1,6 @@
 /// <reference types="web-bluetooth" />
 import { Component, computed, effect } from '@angular/core';
-import { BleServiceService } from './gaming/service/ble-service.service';
+import { BleServiceService } from '../service/ble-service.service';
 import { LoginRegisterComponent } from "./login-register/login-register.component";
 import { OuthServiceService } from '../service/outh-service.service';
 import { PlayComponent } from "./play/play.component";

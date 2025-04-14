@@ -17,7 +17,7 @@
             <app-ble-selector (Start)="gameSelect.set(0)"></app-ble-selector>
             }
             @case (0) {
-                <div class="gamelist-header"><h3>Select Game</h3></div>
+                <div class="gamelist-header"><h2>Select Game</h2></div>
                 <div class="gamelist">
                     @for (item of games; track $index) {
                     <div class="game-v" [style.backgroundImage]="'url(' + item.logo + ')'"

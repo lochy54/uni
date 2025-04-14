@@ -1,0 +1,82 @@
+@import url(../../styles.scss);
+
+::ng-deep :root {
+    --p-card-title-font-size : 2rem !important;
+    }
+
+
+.main-menu-container{
+    width: 90vw;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    gap: 4vh;
+    margin: 5vw;
+}
+
+.end{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.players{
+    border: solid #8a2be2;
+    border-radius: 2vh;
+    padding-bottom: 2vh;
+    box-shadow: 0 2px 20px #9a38f5;
+
+}
+
+.head{
+    color: white !important;
+    background-color: #8a2be2 !important;
+    border-top-right-radius: 1vh;
+    border-top-left-radius: 1vh;
+
+}
+
+.statistic{
+    color: white !important;
+    background-color: #8a2be2 !important;
+    border-top-right-radius: 1vh;
+    border-top-left-radius: 1vh;
+
+    padding: var(--p-datatable-header-cell-padding);
+    background: var(--p-datatable-header-cell-background);
+    border-color: var(--p-datatable-header-cell-border-color);
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    color: var(--p-datatable-header-cell-color);
+    font-weight: var(--p-datatable-column-title-font-weight);
+    text-align: start;
+}
+
+.td-noborder{
+    border-bottom: none !important;
+}
+
+.stat{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.main-code {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+  
+  
+  h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+    color: #666;
+  }
+  

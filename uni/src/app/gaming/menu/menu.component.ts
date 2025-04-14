@@ -1,7 +1,7 @@
 import { Component, computed, effect, EventEmitter, inject, input, Output, signal } from '@angular/core';
-import { SoundServiceService } from '../service/sound-service.service';
-import { BleServiceService } from '../service/ble-service.service';
-import { PlayerServiceService } from '../service/player-service.service';
+import { SoundServiceService } from '../../../service/sound-service.service';
+import { BleServiceService } from '../../../service/ble-service.service';
+import { PlayerServiceService } from '../../../service/player-service.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TreeModule } from 'primeng/tree';
 

@@ -9,40 +9,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
+	"progettoUni.com/models"
 )
 
-type Login struct {
-	Username string `json:"username" validate:"required,min=3,max=20"`
-	Password string `json:"password" validate:"required,min=6"`
+type sensRes struct {
+		Player     string            `bson:"player"`
+		Games      [][]models.Game   `bson:"games"`
+		TotalGames int               `bson:"totalGames"`
 }
-
-type User struct {
-	Name     string `json:"name" bson:"name" validate:"required"`
-	Surname  string `json:"surname" bson:"surname" validate:"required"`
-	Username string `json:"username" bson:"username" validate:"required,min=3,max=20"`
-	Password string `json:"password" bson:"password" validate:"required,min=6"`
-}
-
-type pression struct {
-	Pression float64 `json:"pression" bson:"pression"`
-	Timestap int     `json:"timestap" bson:"timestap"`
-}
-type SensRes struct {
-	Player   string     `bson:"player"`
-	Press    []pression `json:"pression" bson:"pression"`
-}
-type gameStat struct {
-	MaxPression float64 `json:"maxPression"`
-	MinPression float64 `json:"minPression"`
-}
-
-type StatResult struct {
-	MaxPression float64    `json:"maxPression"`
-	MinPression float64    `json:"minPression"`
-	AvgPression float64    `json:"avgPression"`
-	Games       []gameStat `json:"games"`
-}
-
 type Connection struct {
 	database string
 	url      string
@@ -71,7 +45,7 @@ func (c *Connection) Connect() error {
 	return nil
 }
 
-func (c *Connection) Register(user User) error {
+func (c *Connection) Register(user models.User) error {
 	validate := validator.New()
 	err := validate.Struct(user)
 	if err != nil {
@@ -108,13 +82,13 @@ func (c *Connection) Register(user User) error {
 	return nil
 }
 
-func (c *Connection) Login(l Login) error {
+func (c *Connection) Login(l models.Login) error {
 	validate := validator.New()
 	err := validate.Struct(l)
 	if err != nil {
 		return err
 	}
-	var user User
+	var user models.User
 	collection := c.client.Database(c.database).Collection("users")
 	err = collection.FindOne(context.TODO(), bson.M{"username": l.Username}).Decode(&user)
 	if err != nil {
@@ -138,144 +112,128 @@ func checkPassword(hashedPassword, password string) bool {
 	return err == nil
 }
 
-func (c *Connection) SaveSens(s SensRes) error {
-
-	session, err := c.client.StartSession()
-	if err != nil {
-		return err
-	}
-	defer session.EndSession(context.TODO())
-
-	err = session.StartTransaction()
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err != nil {
-			session.AbortTransaction(context.TODO())
-		} else {
-			err = session.CommitTransaction(context.TODO())
-		}
-	}()
-
+func (c *Connection) SaveSens(player string, newSession []models.Game) error {
 	collection := c.client.Database(c.database).Collection("games")
-	_, err = collection.InsertOne(context.TODO(), s)
+	filter := bson.M{"player": player}
+	update := bson.M{
+		"$push": bson.M{
+			"games": newSession,
+		},
+	}
+	opts := options.Update().SetUpsert(true)
+	_, err := collection.UpdateOne(context.TODO(), filter, update, opts)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to save sensor data: %v", err)
 	}
 	return nil
 }
 
-func (c *Connection) GetSens(player string, offset, limit int, ) ([]SensRes, error) {
-	var res []SensRes
+func (c *Connection) GetPlayerNames(limit int, index int, filter string) ([]string, int ,error) {
 	collection := c.client.Database(c.database).Collection("games")
-	filter := bson.M{"player": player}
-	opts := options.Find().
-		SetSkip(int64(offset)).
-		SetLimit(int64(limit))
-	cursor, err := collection.Find(context.TODO(), filter, opts)
+
+	query := bson.M{}
+	if filter != "" {
+		query["player"] = bson.M{"$regex": filter, "$options": "i"} // case-insensitive match
+	}
+
+	totalCount, err := collection.CountDocuments(context.TODO(), query)
 	if err != nil {
-		return nil, err
+		return nil,0, fmt.Errorf("failed to count players: %v", err)
+	}
+	skip := index 
+	cursor, err := collection.Find(context.TODO(), query, options.Find().SetSkip(int64(skip)).SetLimit(int64(limit)))
+	if err != nil {
+		return nil,0, fmt.Errorf("failed to find players: %v", err)
 	}
 	defer cursor.Close(context.TODO())
+	var playerNames []string
 	for cursor.Next(context.TODO()) {
-		var item SensRes
-		if err := cursor.Decode(&item); err != nil {
-			return nil, err
+		var player sensRes
+		if err := cursor.Decode(&player); err != nil {
+			return nil,0, fmt.Errorf("failed to decode player data: %v", err)
 		}
-		res = append(res, item)
+		playerNames = append(playerNames, player.Player)
 	}
 	if err := cursor.Err(); err != nil {
-		return nil, err
+		return nil,0, fmt.Errorf("cursor error: %v", err)
 	}
-
-	return res, nil
+	return playerNames, int(totalCount), nil
 }
 
-func (c *Connection) GetPlayersAfter(afterPlayer string, limit int) ([]string, error) {
+func (c *Connection) GetPlayerGamesByName(playerName string, limit int, index int) ([][]models.Game, int, error) {
 	collection := c.client.Database(c.database).Collection("games")
-	filter := bson.M{
-		"player": bson.M{
-			"$gt": afterPlayer,
-		},
-	}
-	opts := options.Find().
-		SetSort(bson.D{{Key: "player", Value: 1}}).
-		SetLimit(int64(limit))
+	skip := index
+	pipeline := mongo.Pipeline{
+		{{
+			Key: "$match", Value: bson.D{{Key: "player", Value: playerName}},
+		}},
+		{{
+			Key: "$project", Value: bson.D{
+				{Key: "player", Value: 1},
+				{Key: "games", Value: bson.D{{Key: "$slice", Value: []interface{}{"$games", skip, limit}}}},
+				{Key: "totalGames", Value: bson.D{{Key: "$size", Value: "$games"}}},
 
-	cursor, err := collection.Find(context.TODO(), filter, opts)
+			},
+		}},
+	}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
-		return nil, err
+		return nil,0, fmt.Errorf("aggregation failed: %v", err)
 	}
 	defer cursor.Close(context.TODO())
-
-	playerSet := make(map[string]struct{})
-	var players []string
-
-	for cursor.Next(context.TODO()) {
-		var item SensRes
-		if err := cursor.Decode(&item); err != nil {
-			return nil, err
-		}
-		if _, seen := playerSet[item.Player]; !seen {
-			playerSet[item.Player] = struct{}{}
-			players = append(players, item.Player)
+	var result sensRes
+	if cursor.Next(context.TODO()) {
+		if err := cursor.Decode(&result); err != nil {
+			return nil,0,  fmt.Errorf("failed to decode player data: %v", err)
 		}
 	}
-
-	return players, cursor.Err()
+	if err := cursor.Err(); err != nil {
+		return nil,0, fmt.Errorf("cursor error: %v", err)
+	}
+	if result.TotalGames == 0 {
+		return nil,0, fmt.Errorf("player not found or no games available")
+	}
+	return result.Games,result.TotalGames , nil
 }
 
-func (c *Connection) GetStat(player string) (*StatResult, error) {
-	partite, err := c.GetSens(player, 0, 1000)
+func (c *Connection) GetPlayerStats(playerName string) (models.PlayerStats, error) {
+	collection := c.client.Database(c.database).Collection("games")
+
+	var player sensRes
+	err := collection.FindOne(context.TODO(), bson.M{"player": playerName}).Decode(&player)
 	if err != nil {
-		return nil, err
+		return models.PlayerStats{}, fmt.Errorf("player not found: %v", err)
 	}
-	var maxGlobal float64 = 0
-	var minGlobal  float64 =0
-	var count int = 0
-	var tot float64 = 0
-	var g []gameStat
-	for _, game := range partite {
-		var max float64 = -1
-		var min float64 = 1
-		for _, p := range game.Press {
-			if p.Pression != 0 {
-				if p.Pression > max {
-					max = p.Pression
+	var maxPressure float64
+	var maxPressureDuration int
+	var totalGames int
+	var maxPressureLast []float64
+
+	for _, game := range player.Games {
+		var localMax float64
+		totalGames++
+		for i := 0; i < len(game); i++ {
+			pressure := game[i].Pression
+			if pressure > localMax {
+				localMax = pressure
+				if i > 0 {
+					maxPressureDuration = game[i].Timestap - game[i-1].Timestap
 				}
-				if p.Pression < min {
-					min = p.Pression
-				}
-				tot += p.Pression
-				count++
 			}
 		}
-		if(max==-1 && min == -1){
-			continue
+		if(totalGames<100){
+			maxPressureLast = append(maxPressureLast, localMax)
 		}
-		g = append(g, gameStat{
-			MaxPression: max,
-			MinPression: min,
-		})
-		if maxGlobal < max {
-			maxGlobal = max
+		if(localMax>maxPressure){
+			maxPressure = localMax
 		}
-		if minGlobal> min {
-			minGlobal = min
-		}
-	}
-	if(count == 0){
-		tot = 0
-	}else{
-		tot = tot / float64(count)
-	}
-	return &StatResult{
-		MaxPression:  maxGlobal,
-		MinPression:  minGlobal,
-		AvgPression:   tot,
-		Games:      g,
-	}, nil
 
+	}
+	stats := models.PlayerStats{
+		MaxPressure:         maxPressure,
+		MaxPressureDuration: maxPressureDuration,
+		MaxPressureLast:     maxPressureLast,
+		TotalGames:          totalGames,
+	}
+	return stats, nil
 }

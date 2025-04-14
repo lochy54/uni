@@ -1,7 +1,17 @@
 ::ng-deep :root {
-    --p-primary-color: #8a2be2 !important;
-    --p-primary-hover-color : #7023b8 !important;
-    --p-floatlabel-focus-color : #8a2be2 !important;
+    --p-primary-50: #e0b2f4 !important;
+    --p-primary-100: #d196f2 !important;
+    --p-primary-200: #c37af0 !important;
+    --p-primary-300: #b165ec !important;
+    --p-primary-400: #9f4ce9 !important;
+    --p-primary-500: #8a2be2 !important; 
+    --p-primary-600: #7b26d0 !important;
+    --p-primary-700: #6c1bbf !important;
+    --p-primary-800: #5d12ad !important;
+    --p-primary-900: #4e0a9b !important;
+    --p-primary-950: #46078f !important;  
+    --p-content-border-color : #8a2be2 !important; 
+    --p-paginator-border-radius : 2vh !important;
 }
 body{
     margin: 0px;
@@ -21,7 +31,9 @@ a{
     transition: transform 0.2s ease-in-out;
 }
 
-
+.material-symbols-outlined:hover{
+    transform: scale(1.2) ;
+}
 
 .p-progressspinner{
     height: 2rem !important;
@@ -94,7 +106,6 @@ form{
     }
 }
 
-$--p-primary-color : #8a2be2;
 
 .icon:hover{
     transform: scale(1) !important ;

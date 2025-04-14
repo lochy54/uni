@@ -1,14 +1,14 @@
 
 .main-menu{
-    padding: 2vh;
+    margin-left: 0 !important;
+    padding: 2vw;
     position: absolute;
     display: flex;
     flex-direction: column;
-    height: 70vh;
-    top: 5vh;
-    margin-left: 5vw;
+    height: 79.5vh;
+    top: 1vh;
     overflow-y: scroll;
-    gap: 2vh;
+    gap: 3vh;
     -ms-overflow-style: none;  
     scrollbar-width: none; 
     z-index: 200; 

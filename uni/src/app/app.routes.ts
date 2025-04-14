@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { GamingComponent } from './gaming/gaming.component';
 import { DefoultPageComponent } from './defoult-page/defoult-page.component';
-import { PlayerServiceService } from './gaming/service/player-service.service';
+import { PlayerServiceService } from '../service/player-service.service';
 import { OuthServiceService } from '../service/outh-service.service';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 

@@ -9,13 +9,13 @@ import {
   effect,
   computed
 } from '@angular/core';
-import { BleServiceService } from '../../service/ble-service.service';
-import { PlayerServiceService } from '../../service/player-service.service';
+import { BleServiceService } from '../../../../service/ble-service.service';
+import { PlayerServiceService } from '../../../../service/player-service.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { GameOverComponent } from "../game-over/game-over.component";
 import { ScoreComponent } from "../score/score.component";
-import { SoundServiceService } from '../../service/sound-service.service';
-import { sensibility } from '../../../../service/api-service.service';
+import { SoundServiceService } from '../../../../service/sound-service.service';
+import { game } from '../../../../service/api-service.service';
 
 interface Element {
   w: number;
@@ -39,7 +39,7 @@ export class FlappyComponent implements AfterViewInit {
   // Game state
   readonly points = signal<number>(0);
   readonly gameOver = signal<boolean>(true);
-  private sens! : sensibility[]
+  private sens! : game[]
   private startDate! : number 
   // Services
   private readonly bleService = inject(BleServiceService);

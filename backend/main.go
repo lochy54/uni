@@ -6,6 +6,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
+	"progettoUni.com/models"
 	"progettoUni.com/mongo"
 	"progettoUni.com/token"
 )
@@ -33,19 +34,47 @@ func main() {
 	api := app.Party("/api")
 
 	api.Post("/login", login)
-	api.Get("/chekToken", chekToken)
 	api.Post("/register", register)
-	api.Get("/generate", generateCode)
 	api.Post("/chekCode", chekCode)
-	api.Post("/saveSens", saveSens)
-	api.Get("/getSens/{player}/{offset}/{limit}", getSens)
-	api.Get("/getStat/{player}", getStat)
-	api.Get("/getPlayer/{after}/{limit}", getPlayer)
+	api.Post("/saveSens/{player}", saveSens)
+	api.Use(AuthInterceptor)
+	api.Get("/chekToken", chekToken)
+	api.Get("/generate", generateCode)
+	api.Get("/getPlayerNames/{limit}/{index}", getPlayerNames)
+	api.Get("/getPlayerNames/{limit}/{index}/{filter}", getPlayerNames)
+	api.Get("/getPlayerGamesByName/{player}/{limit}/{index}", getPlayerGamesByName)
+	api.Get("/getPlayerStats/{player}", getPlayerStats)
+
 	app.Listen("0.0.0.0:8080")
 }
 
+func AuthInterceptor(ctx iris.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Authorization header is missing")
+		return
+	}
+	var t string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		t = authHeader[7:]
+	} else {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON("Invalid authorization format, Bearer token expected")
+		return
+	}
+	err, user := token.ValidateJWT(t)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.Values().Set("user", user)
+	ctx.Next()
+}
+
 func register(ctx iris.Context) {
-	var user mongo.User
+	var user models.User
 	if err := ctx.ReadJSON(&user); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -68,34 +97,13 @@ func register(ctx iris.Context) {
 }
 
 func chekToken(ctx iris.Context) {
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Authorization header is missing")
-		return
-	}
-
-	var t string
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		t = authHeader[7:]
-	} else {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Invalid authorization format, Bearer token expected")
-		return
-	}
-
-	err, user := token.ValidateJWT(t)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
+	user := ctx.Values().Get("user").(string)
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(user)
 }
 
 func login(ctx iris.Context) {
-	var l mongo.Login
+	var l models.Login
 	if err := ctx.ReadJSON(&l); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -117,31 +125,9 @@ func login(ctx iris.Context) {
 	ctx.JSON(token)
 }
 
-
 func generateCode(ctx iris.Context) {
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Authorization header is missing")
-		return
-	}
-
-	var t string
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		t = authHeader[7:]
-	} else {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Invalid authorization format, Bearer token expected")
-		return
-	}
-
-	err, username := token.ValidateJWT(t)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
-	code := Maps.GenerateCode(username)
+	user := ctx.Values().Get("user").(string)
+	code := Maps.GenerateCode(user)
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(code)
 }
@@ -153,7 +139,7 @@ func chekCode(ctx iris.Context) {
 		ctx.JSON(err.Error())
 		return
 	}
-	if err:= Maps.IsCodeActive(c); err!= nil {
+	if err := Maps.IsCodeActive(c); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
@@ -162,8 +148,12 @@ func chekCode(ctx iris.Context) {
 }
 
 func saveSens(ctx iris.Context) {
-	
-	var s mongo.SensRes
+	player := ctx.Params().Get("player")
+	if player == "" {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON("ivalid param")
+	}
+	var s []models.Game
 	if err := ctx.ReadJSON(&s); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
@@ -175,14 +165,13 @@ func saveSens(ctx iris.Context) {
 		ctx.JSON("Authorization header is missing")
 		return
 	}
-
-	err := Maps.IsCodeActive(authHeader);
-	if err!= nil {
+	err := Maps.IsCodeActive(authHeader)
+	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	if err := Conn.SaveSens(s); err!= nil {
+	if err := Conn.SaveSens(player, s); err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
@@ -190,142 +179,82 @@ func saveSens(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 }
 
-func getSens(ctx iris.Context) {
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Authorization header is missing")
-		return
-	}
-
-	var t string
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		t = authHeader[7:]
-	} else {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Invalid authorization format, Bearer token expected")
-		return
-	}
+func getPlayerStats(ctx iris.Context) {
 	player := ctx.Params().Get("player")
-	offsetStr := ctx.Params().Get("offset")
-	limitStr := ctx.Params().Get("limit")
-
-	if offsetStr == "" || limitStr == ""  || player == ""{
+	if player == "" {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid param")
-		return
+		ctx.JSON("ivalid param")
 	}
-
-	offset, err := strconv.Atoi(offsetStr)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid offset parameter")
-		return
-	}
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid limit parameter")
-		return
-	}
-
-
-	err, _ = token.ValidateJWT(t)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(err.Error())
-		return
-	}
-	res, err := Conn.GetSens(player , offset , limit)
+	res, err := Conn.GetPlayerStats(player)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
 	ctx.JSON(res)
+
 }
 
-func getPlayer(ctx iris.Context) {
-	after := ctx.Params().Get("after")
-	limitStr := ctx.Params().Get("limit")
-
-	if limitStr == "" {
+func getPlayerNames(ctx iris.Context) {
+	filter := ctx.Params().Get("filter")
+	limitstr := ctx.Params().Get("limit")
+	indexstr := ctx.Params().Get("index")
+	if limitstr == "" || indexstr == "" {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid param")
-		return
+		ctx.JSON("ivalid param")
 	}
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid limit parameter")
-		return
-	}
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Authorization header is missing")
-		return
-	}
-
-	var t string
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		t = authHeader[7:]
-	} else {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Invalid authorization format, Bearer token expected")
-		return
-	}
-	err, _ = token.ValidateJWT(t)
+	limit, err := strconv.Atoi(limitstr)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	res , err :=Conn.GetPlayersAfter(after,limit)
+	index, err := strconv.Atoi(indexstr)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	ctx.JSON(res)
+	res, count, err := Conn.GetPlayerNames(limit, index, filter)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.JSON(iris.Map{
+		"res":   res,
+		"count": count,
+	})
 }
 
-
-func getStat(ctx iris.Context) {
+func getPlayerGamesByName(ctx iris.Context) {
+	limitstr := ctx.Params().Get("limit")
+	indexstr := ctx.Params().Get("index")
 	player := ctx.Params().Get("player")
-
-	if player == ""{
+	if limitstr == "" || indexstr == "" || player == "" {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON("Invalid param")
-		return
+		ctx.JSON("ivalid param")
 	}
-
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Authorization header is missing")
-		return
-	}
-
-	var t string
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		t = authHeader[7:]
-	} else {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON("Invalid authorization format, Bearer token expected")
-		return
-	}
-	err, _ := token.ValidateJWT(t)
+	limit, err := strconv.Atoi(limitstr)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	res , err :=Conn.GetStat(player)
+	index, err := strconv.Atoi(indexstr)
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
 		ctx.JSON(err.Error())
 		return
 	}
-	ctx.JSON(res)
+	res, count, err := Conn.GetPlayerGamesByName(player, limit, index)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(err.Error())
+		return
+	}
+	ctx.JSON(iris.Map{
+		"res":   res,
+		"count": count,
+	})
 }
