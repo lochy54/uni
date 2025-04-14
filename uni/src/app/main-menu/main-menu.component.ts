@@ -115,6 +115,8 @@ filter(value: EventTarget | null){
       .getPlayerNames(limit, startIndex, globalFilter)
       .pipe(
         map((res) => {
+          if(!res.res)
+            return  { res: [], count: 0} 
           const ret: { status: boolean; name: string; position: number }[] = [];
           res.res.forEach((val, n) => {
             ret.push({ name: val, status: false, position: n });

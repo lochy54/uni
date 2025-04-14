@@ -37,7 +37,7 @@ export class GamingComponent {
   private readonly bleService = inject(BleServiceService)
 
   readonly pause = toSignal(this.playerService.pouseSignal)
-  readonly gameSelect = signal<number|undefined>(0)
+  readonly gameSelect = signal<number|undefined>(undefined)
   readonly pression = toSignal(this.bleService.pressureSignal)
   readonly chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight})
 
@@ -45,7 +45,7 @@ export class GamingComponent {
   ) {
     effect(()=>{
       if(this.pression()==undefined){
-        this.gameSelect.set(0)
+        this.gameSelect.set(undefined)
         this.playerService.pouse(false)
       }
     },{allowSignalWrites:true})
