@@ -7,12 +7,11 @@ import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DividerModule } from 'primeng/divider';
-import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-defoult-page',
   standalone: true,
-  imports: [ LoginRegisterComponent, PlayComponent, HeaderComponent, FooterComponent,DividerModule,Toast],
+  imports: [ LoginRegisterComponent, PlayComponent, HeaderComponent, FooterComponent,DividerModule],
   templateUrl: './defoult-page.component.html',
   styleUrl: './defoult-page.component.scss'
 })

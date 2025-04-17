@@ -68,8 +68,8 @@
                 </span>
         </div>
         <div class="form" [class.play-form-open]="openDiff()" [class.play-form-close]="!openDiff()">
-            <h3>Difficulty {{difficulty()}}</h3><input type="range" id="difficulty" min="1" max="10" [value]="difficulty()!" step="1" (change)="onDifficultyChange($event)"> 
-            <h3>Sensibility {{sensibility()}}</h3><input type="range" id="difficulty" min="0.1" max="4.0" [value]="sensibility()!" step="0.1" (change)="onSensChange($event)"> 
+            <h3>Difficulty {{difficulty()}}</h3><input type="range" id="difficulty" min="0.1" max="2.5" [value]="difficulty()!" step="1" (change)="onDifficultyChange($event)"> 
+            <h3>Sensibility {{sensibility()}}</h3><input type="range" id="difficulty" min="0.1" max="10.0" [value]="sensibility()!" step="0.1" (change)="onSensChange($event)"> 
 
         </div>
     </div>

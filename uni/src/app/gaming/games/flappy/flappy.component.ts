@@ -48,7 +48,7 @@ export class FlappyComponent implements AfterViewInit {
   // Signal values
   private readonly rawDifficulty = toSignal(this.playerService.difficultySignal);
   private readonly difficulty = computed(() =>
-    this.rawDifficulty()! * (this.canvas.nativeElement.width / 800)
+    this.rawDifficulty()!
   ); 
   private readonly pressure = toSignal(this.playerService.pressureSetSignal);
   private readonly pause = toSignal(this.playerService.pouseSignal);

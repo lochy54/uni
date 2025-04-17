@@ -6,13 +6,14 @@ import { OuthServiceService } from '../service/outh-service.service';
 import { PlayComponent } from "./play/play.component";
 import { MainMenuComponent } from "./main-menu/main-menu.component";
 import { RouterOutlet } from '@angular/router';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  imports: [RouterOutlet]
+  imports: [RouterOutlet,Toast]
 })
 export class AppComponent {
 

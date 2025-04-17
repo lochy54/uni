@@ -13,13 +13,12 @@ import { FormsModule } from '@angular/forms';
 import { DataViewModule } from 'primeng/dataview';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-gaming',
   standalone: true,
   imports: [BleSelectorComponent, HeaderComponent, FooterComponent, LandscapeComponent, MenuComponent, FlappyComponent,  
-    CardModule, ButtonModule,Toast],
+    CardModule, ButtonModule],
   templateUrl: './gaming.component.html',
   styleUrl: './gaming.component.scss'
 })

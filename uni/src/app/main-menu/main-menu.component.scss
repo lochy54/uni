@@ -2,6 +2,9 @@
 
 ::ng-deep :root {
     --p-card-title-font-size : 2rem !important;
+    .p-datatable-table-container{
+        overflow: visible !important;
+    }
     }
 
 

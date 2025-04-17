@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { ApiServiceService } from '../../service/api-service.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -37,7 +36,6 @@ export class PlayComponent {
   private readonly fb = inject(FormBuilder)
   private readonly router = inject(Router)
   private readonly apiService = inject(ApiServiceService)
-  private readonly errorService= inject(MessageService)
 
   readonly playForm : FormGroup = this.fb.nonNullable.group({
     code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]],
@@ -53,9 +51,8 @@ play(){
   this.loading.set(true)
   this.apiService.isCodeActive(this.playForm.controls["code"].value).pipe(filter(()=>this.playForm.valid),tap(()=>this.loading.set(false))).subscribe({
     next : (_) => {this.router.navigate(['/game/'+this.playForm.controls["code"].value+"/"+this.playForm.controls["username"].value]);},
-    error : (err)=> {
+    error : (_)=> {
       this.loading.set(false)
-      this.errorService.add(({ severity: 'error', summary: 'Error', detail: err.error}));
     },
   })
 

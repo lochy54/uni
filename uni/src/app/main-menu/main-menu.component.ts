@@ -5,11 +5,9 @@ import {
   game,
   playerStats,
 } from '../../service/api-service.service';
-import { LazyLoadEvent, MessageService } from 'primeng/api';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FooterComponent } from '../footer/footer.component';
 import { HeaderComponent } from '../header/header.component';
-import { Toast } from 'primeng/toast';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { map } from 'rxjs';
 import { ChartModule } from 'primeng/chart';
@@ -47,14 +45,13 @@ Chart.register(
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [FooterComponent, HeaderComponent, Toast, TableModule, ChartModule ,  FloatLabelModule,
+  imports: [FooterComponent, HeaderComponent, TableModule, ChartModule ,  FloatLabelModule,
     InputTextModule,InputGroupAddonModule,
         InputGroupModule, CardModule, ProgressSpinner, ButtonModule],
   templateUrl: './main-menu.component.html',
   styleUrl: './main-menu.component.scss',
 })
 export class MainMenuComponent {
-  private readonly errorService = inject(MessageService);
   private readonly outhService = inject(OuthServiceService);
   private readonly apiService = inject(ApiServiceService);
 
@@ -89,12 +86,7 @@ export class MainMenuComponent {
         this.code.set(val);
         this.loading.set(false)
       },
-      error: (err) => {
-        this.errorService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err.error,
-        });
+      error: (_) => {
         this.loading.set(false)
 
       },
@@ -130,12 +122,7 @@ filter(value: EventTarget | null){
           this.countPlayer.set(val.count);
           this.loadingPlayer.set(false);
         },
-        error: (err) => {
-          this.errorService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.error,
-          });
+        error: (_) => {
           this.loadingPlayer.set(false);
         },
       });
@@ -217,12 +204,7 @@ filter(value: EventTarget | null){
           this.countGames.set(val.count);
           this.loadingGame.set(false);
         },
-        error: (err) => {
-          this.errorService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.error,
-          });
+        error: (_) => {
           this.loadingGame.set(false);
         },
       });
@@ -310,12 +292,7 @@ filter(value: EventTarget | null){
           this.stat.set(val);
           this.loadingStat.set(false);
         },
-        error: (err) => {
-          this.errorService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.error,
-          });
+        error: (_) => {
           this.loadingStat.set(false);
         },
       });

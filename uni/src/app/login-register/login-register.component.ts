@@ -2,7 +2,6 @@ import { Component, computed, effect, inject, signal, Signal } from '@angular/co
 import { OuthServiceService } from '../../service/outh-service.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter, finalize, tap } from 'rxjs';
-import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
@@ -35,7 +34,6 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 export class LoginRegisterComponent {
   private readonly outhService = inject(OuthServiceService)
   private readonly fb= inject(FormBuilder)
-  private readonly errorService= inject(MessageService)
   readonly loginForm: FormGroup = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(20)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
@@ -54,20 +52,25 @@ export class LoginRegisterComponent {
 
 
 login(){
+  this.loading.set(true)
   this.outhService.login({
     username: this.loginForm.controls["username"].value,
     password: this.loginForm.controls["password"].value,
-  }).pipe(filter(()=>this.loginForm.valid),tap(()=>this.loading.set(false))).subscribe(
+  }).pipe(filter(()=>this.loginForm.valid)).subscribe(
     {
-      error : (err) =>{
-        this.errorService.add(({ severity: 'error', summary: 'Error', detail: err.error}));
-      }
+      next: (_) => {
+        this.loading.set(false);
+      },
+      error: (_) => {
+        this.loading.set(false);
+      },
     }
   )
 }
 
 
 register(){
+  this.loading.set(true)
   this.outhService.register({
     name: this.registerForm.controls["name"].value,
     surname: this.registerForm.controls["surname"].value,
@@ -75,9 +78,12 @@ register(){
     password: this.registerForm.controls["password"].value
   }).pipe(filter(()=>this.registerForm.valid),tap(()=>this.loading.set(false))).subscribe(
     {
-      error : (err) =>{
-        this.errorService.add(({ severity: 'error', summary: 'Error', detail: err.error}));
-      }
+      next: (_) => {
+        this.loading.set(false);
+      },
+      error: (_) => {
+        this.loading.set(false);
+      },
     }
   )
 }

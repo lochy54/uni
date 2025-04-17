@@ -17,7 +17,6 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +24,6 @@ import { MessageService } from 'primeng/api';
 export class PlayerServiceService implements CanActivate {
   private readonly router = inject(Router);
   private readonly apiService = inject(ApiServiceService);
-  private readonly errorService = inject(MessageService);
 
   private gameCode: string = '';
 
@@ -51,12 +49,7 @@ export class PlayerServiceService implements CanActivate {
 
     return this.apiService.isCodeActive(this.gameCode).pipe(
       map(() => true),
-      catchError((err) => {
-        this.errorService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err.error,
-        });
+      catchError((_) => {
         this.router.navigateByUrl('');
         return of(false);
       })
@@ -99,14 +92,6 @@ export class PlayerServiceService implements CanActivate {
           }
         })
       )
-      .subscribe({
-        error: (error) => {
-          this.errorService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.error,
-          });
-        },
-      });
+      .subscribe();
   }
 }
