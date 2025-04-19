@@ -28,15 +28,15 @@
                     <label for="username3">Username</label>
                 </p-floatlabel>
                 </p-inputgroup>
-            @let playuser = playForm.get('username');
-            @if (playuser?.touched && playuser?.invalid) {
-              @if (playuser?.hasError('required')) {
+            @let playuser = playForm.controls.username;
+            @if (playuser.touched && playuser.invalid) {
+              @if (playuser.hasError('required')) {
                 <p-message severity="error" text="Username is required"></p-message>
               }
-              @if (playuser?.hasError('minlength')) {
+              @if (playuser.hasError('minlength')) {
                 <p-message severity="warn" text="Min 3 characters"></p-message>
               }
-              @if (playuser?.hasError('maxlength')) {
+              @if (playuser.hasError('maxlength')) {
                 <p-message severity="warn" text="Max 20 characters"></p-message>
               }
             }
@@ -54,15 +54,15 @@
                     <label for="code">code</label>
                 </p-floatlabel>
             </p-inputgroup>
-            @let playcode = playForm.get('code');
-            @if (playcode?.touched && playcode?.invalid) {
-              @if (playcode?.hasError('required')) {
+            @let playcode = playForm.controls.code;
+            @if (playcode.touched && playcode.invalid) {
+              @if (playcode.hasError('required')) {
                 <p-message severity="error" text="Code is required"></p-message>
               }
-              @if (playcode?.hasError('minlength')) {
+              @if (playcode.hasError('minlength')) {
                 <p-message severity="warn" text="Min 6 characters"></p-message>
               }
-              @if (playcode?.hasError('maxlength')) {
+              @if (playcode.hasError('maxlength')) {
                 <p-message severity="warn" text="Max 6 characters"></p-message>
               }
             }

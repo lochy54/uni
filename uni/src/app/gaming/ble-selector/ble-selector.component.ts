@@ -40,8 +40,8 @@ export class BleSelectorComponent {
   private readonly errorService = inject(MessageService)
   private readonly audioService = inject(SoundServiceService)
 
-  readonly bleForm: FormGroup = this.fb.nonNullable.group({
-    connected: [undefined, [Validators.requiredTrue]]
+  readonly bleForm = this.fb.nonNullable.group({
+    connected: [false, [Validators.requiredTrue]]
   });
   readonly loading = signal<boolean>(false)
 
@@ -51,11 +51,11 @@ export class BleSelectorComponent {
     this.loading.set(true)
     this.bleService.connect().pipe(finalize(() => this.loading.set(false)) ).subscribe({
       next :()=> {
-          this.bleForm.controls["connected"].setValue(true)
+          this.bleForm.controls.connected.setValue(true)
           this.audioService.playConnSound()
       },
       error : (err) => {
-        this.bleForm.controls["connected"].setValue(false)
+        this.bleForm.controls.connected.setValue(false)
         this.errorService.add(({ severity: 'error', summary: 'Error', detail: err.message}));
       }
     })

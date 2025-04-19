@@ -61,16 +61,7 @@ export class ApiServiceService {
   }
 
   chekToken(): Observable<string> {
-    return this.http.get<string>(`${apiUrl}/chekToken`).pipe(
-      tap({
-        error: (err) =>
-          this.errorService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.error,
-          }),
-      })
-    );
+    return this.http.get<string>(`${apiUrl}/chekToken`)
   }
 
   register(user: user): Observable<string> {

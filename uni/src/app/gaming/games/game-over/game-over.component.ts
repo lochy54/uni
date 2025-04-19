@@ -11,7 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styleUrl: './game-over.component.scss'
 })
 export class GameOverComponent {
-    @Output() PlayAgane : EventEmitter<boolean> = new EventEmitter()
+    @Output() PlayAgain : EventEmitter<boolean> = new EventEmitter()
     private readonly soundservice = inject(SoundServiceService)
     private readonly playerService = inject(PlayerServiceService)
     private readonly pause = toSignal(this.playerService.pouseSignal)
@@ -49,7 +49,7 @@ export class GameOverComponent {
         } else {
           clearInterval(this.countdownInterval);
           this.countDown.set(undefined)
-          this.PlayAgane.emit(true); 
+          this.PlayAgain.emit(true); 
         }
       }, 1000); 
     }

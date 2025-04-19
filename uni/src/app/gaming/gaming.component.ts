@@ -13,12 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { DataViewModule } from 'primeng/dataview';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-
+import { SpaceComponent } from "./games/running/running.component";
+import { GrabComponent } from './games/grab/grab.component';
 @Component({
   selector: 'app-gaming',
   standalone: true,
-  imports: [BleSelectorComponent, HeaderComponent, FooterComponent, LandscapeComponent, MenuComponent, FlappyComponent,  
-    CardModule, ButtonModule],
+  imports: [BleSelectorComponent, HeaderComponent, FooterComponent, LandscapeComponent, MenuComponent, FlappyComponent,
+    CardModule, ButtonModule, SpaceComponent,GrabComponent],
   templateUrl: './gaming.component.html',
   styleUrl: './gaming.component.scss'
 })
@@ -26,6 +27,9 @@ export class GamingComponent {
 
   games = [
     { name: 'Flappy', logo: 'game-logo/flappy.png', pso: 1 },
+    { name: 'Runing', logo: 'game-logo/running.png', pso: 2 },
+    { name: 'Grab', logo: 'game-logo/grab.png', pso: 3 }
+
   ];
   
 
@@ -36,7 +40,7 @@ export class GamingComponent {
   private readonly bleService = inject(BleServiceService)
 
   readonly pause = toSignal(this.playerService.pouseSignal)
-  readonly gameSelect = signal<number|undefined>(undefined)
+  readonly gameSelect = signal<number|undefined>(0)
   readonly pression = toSignal(this.bleService.pressureSignal)
   readonly chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight})
 
@@ -44,7 +48,7 @@ export class GamingComponent {
   ) {
     effect(()=>{
       if(this.pression()==undefined){
-        this.gameSelect.set(undefined)
+        this.gameSelect.set(0)
         this.playerService.pouse(false)
       }
     },{allowSignalWrites:true})

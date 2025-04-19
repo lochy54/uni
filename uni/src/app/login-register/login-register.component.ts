@@ -34,11 +34,11 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 export class LoginRegisterComponent {
   private readonly outhService = inject(OuthServiceService)
   private readonly fb= inject(FormBuilder)
-  readonly loginForm: FormGroup = this.fb.nonNullable.group({
+  readonly loginForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(20)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
-  readonly registerForm: FormGroup = this.fb.nonNullable.group({
+  readonly registerForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     name: ['', [Validators.required]],
@@ -54,8 +54,8 @@ export class LoginRegisterComponent {
 login(){
   this.loading.set(true)
   this.outhService.login({
-    username: this.loginForm.controls["username"].value,
-    password: this.loginForm.controls["password"].value,
+    username: this.loginForm.controls.username.value,
+    password: this.loginForm.controls.password.value,
   }).pipe(filter(()=>this.loginForm.valid)).subscribe(
     {
       next: (_) => {
@@ -72,10 +72,10 @@ login(){
 register(){
   this.loading.set(true)
   this.outhService.register({
-    name: this.registerForm.controls["name"].value,
-    surname: this.registerForm.controls["surname"].value,
-    username: this.registerForm.controls["username"].value,
-    password: this.registerForm.controls["password"].value
+    name: this.registerForm.controls.name.value,
+    surname: this.registerForm.controls.surname.value,
+    username: this.registerForm.controls.username.value,
+    password: this.registerForm.controls.password.value
   }).pipe(filter(()=>this.registerForm.valid),tap(()=>this.loading.set(false))).subscribe(
     {
       next: (_) => {

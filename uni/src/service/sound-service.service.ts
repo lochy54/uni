@@ -11,7 +11,7 @@ export class SoundServiceService {
   private readonly connected = new Audio('./sound/connected.mp3');
   private readonly loopGame = new Audio('./sound/loopGame.mp3'); 
   private readonly die = new Audio('./sound/die.mp3');
-  private readonly animation = new Audio('./sound/animation.mp3');
+  private readonly julp = new Audio('./sound/animation.mp3');
 
   private  volumeS: number = 0.1;
   private  volumeA: number = 0.3;
@@ -26,7 +26,7 @@ export class SoundServiceService {
   }
 
   private initializeSounds() {
-    [this.click, this.loopMain, this.connected, this.loopGame, this.start, this.die, this.animation].forEach(audio => {
+    [this.click, this.loopMain, this.connected, this.loopGame, this.start, this.die, this.julp ].forEach(audio => {
       audio.volume = this.volumeS;
       audio.load();
     });
@@ -63,9 +63,10 @@ export class SoundServiceService {
     this.playSound(this.die);
   }
 
-  playAnimationSound() {
-    this.playSound(this.animation);
+  playJumpSound() {
+    this.playSound(this.julp);
   }
+
 
   setVolumeEffect(vol: number) {
     this.volumeA = vol / 10;
@@ -73,7 +74,7 @@ export class SoundServiceService {
       volumeA : vol,
       volumeS : this.volumeS * 10
     });
-    [this.click ,this.start, this.die, this.animation , this.connected].forEach(audio => {
+    [this.click ,this.start, this.die, this.julp , this.connected].forEach(audio => {
       audio.volume = this.volumeA;
     });
   }

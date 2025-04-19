@@ -1,0 +1,8 @@
+
+<canvas #gameCanvas></canvas>
+
+    @if(gameOver()){
+        <app-game-over (PlayAgain)="startGame()"></app-game-over>
+    }@else{
+        <app-score [score]="points()"></app-score>
+    }

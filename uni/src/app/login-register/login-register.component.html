@@ -26,15 +26,15 @@
                 <label for="username1">Username</label>
             </p-floatlabel>
             </p-inputgroup>
-            @let usernameControl = registerForm.get('username');
-            @if (usernameControl?.touched && usernameControl?.invalid) {
-              @if (usernameControl?.hasError('required')) {
+            @let userReg = registerForm.controls.username;
+            @if (userReg.touched &&userReg.invalid) {
+              @if (userReg.hasError('required')) {
                 <p-message severity="error" text="Username is required"></p-message>
               }
-              @if (usernameControl?.hasError('minlength')) {
+              @if (userReg.hasError('minlength')) {
                 <p-message severity="warn" text="Min 3 characters"></p-message>
               }
-              @if (usernameControl?.hasError('maxlength')) {
+              @if (userReg.hasError('maxlength')) {
                 <p-message severity="warn" text="Max 20 characters"></p-message>
               }
             }
@@ -63,12 +63,12 @@
                     }
                   </p-inputgroup-addon>
             </p-inputgroup>
-            @let passwordControl = registerForm.get('password');
-            @if (passwordControl?.touched && passwordControl?.invalid) {
-              @if (passwordControl?.hasError('required')) {
+            @let passReg = registerForm.controls.password;
+            @if (passReg.touched && passReg.invalid) {
+              @if (passReg.hasError('required')) {
                 <p-message severity="error" text="Password is required"></p-message>
               }
-              @if (passwordControl?.hasError('minlength')) {
+              @if (passReg.hasError('minlength')) {
                 <p-message severity="warn" text="Min 6 characters"></p-message>
               }
             }
@@ -85,8 +85,8 @@
                     <label for="name">Name</label>
                 </p-floatlabel>
                 </p-inputgroup>
-            @let nameControl = registerForm.get('name');
-            @if (nameControl?.touched && nameControl?.hasError('required')) {
+                @let nameReg = registerForm.controls.name;
+            @if (nameReg.touched && nameReg.hasError('required')) {
               <p-message severity="error" text="Name is required"></p-message>
             }
   
@@ -102,8 +102,8 @@
                     <label for="surname">surname</label>
                 </p-floatlabel>
                 </p-inputgroup>
-            @let surnameControl = registerForm.get('surname');
-            @if (surnameControl?.touched && surnameControl?.hasError('required')) {
+                @let surReg = registerForm.controls.surname;
+            @if (surReg.touched && surReg.hasError('required')) {
               <p-message severity="error" text="Surname is required"></p-message>
             }
   
@@ -115,8 +115,8 @@
                 <a href="https://www.garanteprivacy.it/regolamentoue" target="_blank">Accept service</a>
               </label>
             </div>
-            @let acceptControl = registerForm.get('accept');
-            @if (acceptControl?.touched && acceptControl?.hasError('required')) {
+            @let accReg = registerForm.controls.accept;
+            @if (accReg.touched && accReg.hasError('required')) {
               <p-message severity="error" text="You must accept the terms"></p-message>
             }
   
@@ -154,15 +154,15 @@
                     <label for="username2">Username</label>
                 </p-floatlabel>
                 </p-inputgroup>
-            @let loginUser = loginForm.get('username');
-            @if (loginUser?.touched && loginUser?.invalid) {
-              @if (loginUser?.hasError('required')) {
+                @let userLog = loginForm.controls.username;
+            @if (userLog.touched && userLog.invalid) {
+              @if (userLog.hasError('required')) {
                 <p-message severity="error" text="Username is required"></p-message>
               }
-              @if (loginUser?.hasError('minlength')) {
+              @if (userLog.hasError('minlength')) {
                 <p-message severity="warn" text="Min 3 characters"></p-message>
               }
-              @if (loginUser?.hasError('maxlength')) {
+              @if (userLog.hasError('maxlength')) {
                 <p-message severity="warn" text="Max 20 characters"></p-message>
               }
             }
@@ -191,12 +191,12 @@
                     }
                   </p-inputgroup-addon>
             </p-inputgroup>
-            @let loginPass = loginForm.get('password');
-            @if (loginPass?.touched && loginPass?.invalid) {
-              @if (loginPass?.hasError('required')) {
+            @let passLog = loginForm.controls.password;
+            @if (passLog.touched && passLog.invalid) {
+              @if (passLog.hasError('required')) {
                 <p-message severity="error" text="Password is required"></p-message>
               }
-              @if (loginPass?.hasError('minlength')) {
+              @if (passLog.hasError('minlength')) {
                 <p-message severity="warn" text="Min 6 characters"></p-message>
               }
             }

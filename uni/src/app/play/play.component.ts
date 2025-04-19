@@ -37,7 +37,7 @@ export class PlayComponent {
   private readonly router = inject(Router)
   private readonly apiService = inject(ApiServiceService)
 
-  readonly playForm : FormGroup = this.fb.nonNullable.group({
+  readonly playForm  = this.fb.nonNullable.group({
     code: ["", [Validators.required, Validators.minLength(6),Validators.maxLength(6)]],
     username: ["", [Validators.required, Validators.minLength(3),Validators.maxLength(20)]]
   })
@@ -49,8 +49,8 @@ export class PlayComponent {
 
 play(){
   this.loading.set(true)
-  this.apiService.isCodeActive(this.playForm.controls["code"].value).pipe(filter(()=>this.playForm.valid),tap(()=>this.loading.set(false))).subscribe({
-    next : (_) => {this.router.navigate(['/game/'+this.playForm.controls["code"].value+"/"+this.playForm.controls["username"].value]);},
+  this.apiService.isCodeActive(this.playForm.controls.code.value).pipe(filter(()=>this.playForm.valid),tap(()=>this.loading.set(false))).subscribe({
+    next : (_) => {this.router.navigate(['/game/'+this.playForm.controls.code.value+"/"+this.playForm.controls.username.value]);},
     error : (_)=> {
       this.loading.set(false)
     },

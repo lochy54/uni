@@ -26,7 +26,6 @@ export const appConfig: ApplicationConfig = {
 export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
   const token = localStorage.getItem('token');
   if (token && shouldAttachToken(req.url)) {
-    console.log("Interceptor called with URL:", req.url); 
       const cloned = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,

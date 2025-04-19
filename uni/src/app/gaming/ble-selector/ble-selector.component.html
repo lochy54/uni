@@ -21,9 +21,8 @@
         }@else {
             <p-progressSpinner strokeWidth="4" styleClass="p-ml-2" />
         }
-            
-          @let connection = bleForm.get('connected');
-          @if (connection?.value != undefined && connection?.invalid) {
+            @let connected = bleForm.controls.connected ;
+          @if (connected.invalid) {
               <p-message severity="error" text="Not connected"></p-message>
           }
           <!-- Submit -->
