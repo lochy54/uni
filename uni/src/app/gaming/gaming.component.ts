@@ -42,7 +42,7 @@ export class GamingComponent {
   readonly pause = toSignal(this.playerService.pouseSignal)
   readonly gameSelect = signal<number|undefined>(0)
   readonly pression = toSignal(this.bleService.pressureSignal)
-  readonly chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight})
+  readonly chakLandsapeMode = computed<boolean>(()=>{return window.innerWidth>window.innerHeight*1.5})
 
   constructor(
   ) {

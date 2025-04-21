@@ -60,6 +60,7 @@ export class FlappyComponent implements AfterViewInit {
   private pillars: pillar[] = [];
   private pillarImg: HTMLImageElement = new Image();
 
+
   constructor() {
     effect(() => {
       if (this.pause() || this.gameOver()) {
@@ -72,28 +73,45 @@ export class FlappyComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.setupCanvas();
-    const pg: HTMLImageElement = new Image();
-    const backgorund: HTMLImageElement = new Image();
-    pg.src = './game-stuf/pigeon_fiy-Sheet.png';
-    this.pillarImg.src = './game-stuf/pipe.png';
-    backgorund.src = '/game-stuf/city.png';
-    pg.onload = () => {
+  
+    const pg = new Image();
+    const background = new Image();
+    const pillarImg = new Image();
+  
+    const loadImage = (img: HTMLImageElement, src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        img.src = src;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(`Errore nel caricamento di ${src}`);
+      });
+    };
+  
+    Promise.all([
+      loadImage(pg, './game-stuf/pigeon_fiy-Sheet.png'),
+      loadImage(background, '/game-stuf/city.png'),
+      loadImage(pillarImg, './game-stuf/pipe.png')
+    ])
+    .then(([loadedPg, loadedBackground, loadedPipe]) => {
+      this.pillarImg.src = loadedPipe.src;
+  
       this.bird = new Sprite(
-        pg,
-        50,
-        50,
-        32,
-        32,
-        7,
         this.canvas.nativeElement,
-        'circle'
+        "circle",
+        this.canvas.nativeElement.width / 10,
+        this.canvas.nativeElement.height / 5,
+        {
+          image: loadedPg,
+          frameIndex: 0,
+          totalFrames: 7,
+          width: 32,
+          height: 32
+        }
       );
-    };
-    backgorund.onload = () => {
-      this.back = new Background(backgorund, this.canvas.nativeElement);
-    };
+  
+      this.back = new Background(loadedBackground, this.canvas.nativeElement);
+    })
   }
-
+  
   private loadElement() {
     this.bird.reset();
     this.pillars = [];
@@ -135,31 +153,30 @@ export class FlappyComponent implements AfterViewInit {
     const pilar1: pillar = {
       passed: false,
       element: new Sprite(
-        this.pillarImg,
-        canvas.width,
-        canvas.height / 2 + gap,
-        this.pillarImg.width,
-        this.pillarImg.height,
-        1,
-        canvas,
-        'rect'
-      ),
+        canvas,"rect",canvas.width,canvas.height / 2 + gap,{
+          frameIndex:0,
+          totalFrames:1,
+          height:this.pillarImg.height,
+          width:this.pillarImg.width,
+          image:this.pillarImg
+        }
+      )
     };
     const pilar2: pillar = {
       passed: false,
       element: new Sprite(
-        this.pillarImg,
-        canvas.width,
-        canvas.height / 2 -
-          (this.pillarImg.height * canvas.width) / (10 * this.pillarImg.width) -
-          gap1,
-        this.pillarImg.width,
-        this.pillarImg.height,
-        1,
-        canvas,
-        'rect'
-      ),
+        canvas,"rect",canvas.width, canvas.height / 2 -
+        (this.pillarImg.height * canvas.width) / (10 * this.pillarImg.width) -
+        gap1,{
+          frameIndex:0,
+          totalFrames:1,
+          height:this.pillarImg.height,
+          width:this.pillarImg.width,
+          image:this.pillarImg
+        }
+      )
     };
+
 
     this.pillars.push(pilar1, pilar2);
   }
@@ -187,6 +204,13 @@ export class FlappyComponent implements AfterViewInit {
         this.soundService.playDieSound();
         return;
       }
+      else{
+        val.element.update(Date.now(), -this.difficulty(), 0)
+        if (!val.passed && val.element.getPos.x < this.bird.getPos.x) {
+          val.passed = true;
+          this.points.update((val) => val + 1);
+        }
+      }
     });
 
     if (this.pressure()! <= this.pression()!) {
@@ -196,24 +220,14 @@ export class FlappyComponent implements AfterViewInit {
       this.bird.update(Date.now() - this.startDate, 0, +this.difficulty());
     }
 
-    this.pillars.forEach((p) =>
-      p.element.update(Date.now(), -this.difficulty(), 0)
-    );
-
     if (
       !this.pillars.some(
-        (p) => p.element.getPos.x > canvas.width - p.element.wi * 3
+        (p) => p.element.getPos.x > canvas.width - p.element.getV().w *3
       )
     ) {
       this.drowPilar();
     }
 
-    this.pillars.forEach((p) => {
-      if (!p.passed && p.element.getPos.x < this.bird.getPos.x) {
-        p.passed = true;
-        this.points.update((val) => val + 1);
-      }
-    });
 
     this.pillars = this.pillars.filter((p) => p.element.getPos.x > 0);
   }

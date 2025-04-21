@@ -11,7 +11,8 @@ import { ScoreComponent } from "../score/score.component";
 
 interface Food {
   good : boolean,
-  element : Sprite
+  element : Sprite,
+  grubbed : boolean
 }
 
 
@@ -48,13 +49,14 @@ export class GrabComponent {
   // Game assets and objects
   private bird!: Sprite;
   private back!: Background;
+  private plat!: Background;
   private coin: HTMLImageElement = new Image();
   private skull: HTMLImageElement = new Image();
 
   private items: Food[] = [];
 
 
-  private fly = false
+  private run = false
 
   constructor() {
     effect(() => {
@@ -68,34 +70,62 @@ export class GrabComponent {
 
   ngAfterViewInit(): void {
     this.setupCanvas();
-    const pgrun: HTMLImageElement = new Image();
-    const pgreverse: HTMLImageElement = new Image();
-
-    const backgorund: HTMLImageElement = new Image();
-    this.skull.src ='./game-stuf/skull.png'
-    this.coin.src ='./game-stuf/coin.png'
+  
+    const pgrun = new Image();
+    const pgreverse = new Image();
+    const background = new Image();
+    const skull = new Image();
+    const coin = new Image();
+    const plat = new Image()
     pgrun.src = './game-stuf/pigeon_walking-Sheet.png';
     pgreverse.src = './game-stuf/pigeon_walking-Sheet-rev.png';
-
-    backgorund.src = '/game-stuf/city2.png';
-    pgrun.onload = () => {
-      this.bird = new Sprite(
-          pgrun,
-          50,
-          this.canvas.nativeElement.height / 1.5,
-          32,
-          32,
-          4,
-          this.canvas.nativeElement,
-          'circle',
-          pgreverse,
-          4
-        ),
-      backgorund.onload = () => {
-        this.back = new Background(backgorund, this.canvas.nativeElement);
-      };
+    background.src = './game-stuf/city3.png';
+    skull.src = './game-stuf/skull.png';
+    coin.src = './game-stuf/coin.png';
+    plat.src = './game-stuf/ground.png';
+    const loadImage = (img: HTMLImageElement): Promise<HTMLImageElement> => {
+      return new Promise((resolve) => {
+        img.onload = () => resolve(img);
+      });
     };
+  
+    Promise.all([
+      loadImage(pgrun),
+      loadImage(pgreverse),
+      loadImage(background),
+      loadImage(skull),
+      loadImage(coin),
+      loadImage(plat)
+    ]).then(([loadedPgrun, loadedPgreverse, loadedBackground, loadedSkull, loadedCoin, loadedPlat]) => {
+      this.skull.src = loadedSkull.src;
+      this.coin.src = loadedCoin.src;
+  
+      this.bird = new Sprite(
+        this.canvas.nativeElement,
+        "circle",
+        this.canvas.nativeElement.width / 10,
+        this.canvas.nativeElement.height / 1.6,
+        {
+          frameIndex: 0,
+          height: 32,
+          width: 32,
+          image: loadedPgrun,
+          totalFrames: 4
+        },
+        {
+          frameIndex: 0,
+          height: 32,
+          width: 32,
+          image: loadedPgreverse,
+          totalFrames: 4
+        }
+      );
+  
+      this.back = new Background(loadedBackground, this.canvas.nativeElement);
+      this.plat = new Background(loadedPlat,this.canvas.nativeElement,(this.canvas.nativeElement.height/1.6)+this.canvas.nativeElement.width / 10)
+    });
   }
+  
 
   private loadElement() {
     this.bird.reset()
@@ -129,12 +159,48 @@ export class GrabComponent {
     requestAnimationFrame(this.gameLoop.bind(this));
   }
 
-  private drowEnemy() {
-
+  private dorwFood() {
+    const canvas = this.canvas.nativeElement;
+    const useCoin = Math.random() < 0.5;
+    const margin = canvas.width/10
+    const random = Math.floor(Math.random() * (canvas.width - 2 * margin)) + margin;
+    const food : Food = {
+      good : useCoin,
+      grubbed : false,
+      element : new Sprite(canvas , "circle" ,random, 0 , {
+        frameIndex : 0,
+        image : useCoin ? this.coin : this.skull,
+        height: useCoin ? 18 : 530,
+        width: useCoin ? 20 : 359,
+        totalFrames: useCoin ? 9 : 3,
+      })
+    }
+    this.items.push(food)
   }
 
   private update() {
-      if(!this.fly){
+    this.run = this.pressure()! >= this.pression()!
+
+    const canvas = this.canvas.nativeElement
+    this.items.forEach(f => {
+     if( f.element.collisionCheck(this.bird)){
+      if(!f.good){
+      this.gameOver.set(true);
+      this.playerService.savePression(this.sens);
+      this.soundService.stopLoopGame();
+      this.soundService.playDieSound();
+      }else if(!f.grubbed){
+        f.grubbed = true 
+        this.points.update(val => val+1)
+        this.soundService.playCoinSound()
+      }
+      return;
+     }else{
+      f.element.update(Date.now(),0 , +this.difficulty()/1.5)
+     }
+    })
+
+      if(!this.run){
         this.bird.update(Date.now() - this.startDate,this.difficulty(),0)
         if(this.bird.isOutOfCanvas()){
           this.bird.update(Date.now() - this.startDate,-this.difficulty(),0)
@@ -146,8 +212,14 @@ export class GrabComponent {
         }
       }
       
+      if (!this.items.some(p => p.element.getPos.y < canvas.height / 4+ p.element.getV().h)) {
+        this.dorwFood();
+      }
 
-  }
+      this.items = this.items.filter(f =>  !f.grubbed && f.element.getPos.y <canvas.height );
+    }
+
+  
 
   private render() {
     this.context.clearRect(
@@ -156,24 +228,12 @@ export class GrabComponent {
       this.canvas.nativeElement.width,
       this.canvas.nativeElement.height
     );
+    this.bird.currentFrame = this.run ? 1 : 0
     this.back.draw();
-    this.bird.draw(this.fly);
+    this.bird.draw();
+    this.plat.draw();
     this.items.forEach((val) => val.element.draw());
   }
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'a' || event.key === 'A') {
-      this.fly = true;
-      this.soundService.playJumpSound();
-    }
-  }
-
-  @HostListener('window:keyup', ['$event'])
-  handleKeyUp(event: KeyboardEvent) {
-    if (event.key === 'a' || event.key === 'A') {
-      this.fly = false;
-    }
-  }
 
 }

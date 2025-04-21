@@ -11,7 +11,8 @@ export class SoundServiceService {
   private readonly connected = new Audio('./sound/connected.mp3');
   private readonly loopGame = new Audio('./sound/loopGame.mp3'); 
   private readonly die = new Audio('./sound/die.mp3');
-  private readonly julp = new Audio('./sound/animation.mp3');
+  private readonly coin = new Audio('./sound/coin.mp3');
+  private readonly jump = new Audio('./sound/animation.mp3');
 
   private  volumeS: number = 0.1;
   private  volumeA: number = 0.3;
@@ -20,13 +21,16 @@ export class SoundServiceService {
     volumeA : this.volumeA*10,
     volumeS : this.volumeS*10
   })
+  private domReady = false;
 
   constructor() {
-    this.initializeSounds();
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      this.domReady = true;
+      this.initializeSounds();
+    }
   }
-
   private initializeSounds() {
-    [this.click, this.loopMain, this.connected, this.loopGame, this.start, this.die, this.julp ].forEach(audio => {
+    [this.click, this.loopMain, this.connected, this.loopGame, this.start, this.die, this.jump,this.coin ].forEach(audio => {
       audio.volume = this.volumeS;
       audio.load();
     });
@@ -64,7 +68,11 @@ export class SoundServiceService {
   }
 
   playJumpSound() {
-    this.playSound(this.julp);
+    this.playSound(this.jump);
+  }
+
+  playCoinSound(){
+    this.playSound(this.coin)
   }
 
 
@@ -74,7 +82,7 @@ export class SoundServiceService {
       volumeA : vol,
       volumeS : this.volumeS * 10
     });
-    [this.click ,this.start, this.die, this.julp , this.connected].forEach(audio => {
+    [this.click ,this.start, this.die, this.jump , this.connected,this.coin].forEach(audio => {
       audio.volume = this.volumeA;
     });
   }
@@ -91,10 +99,19 @@ export class SoundServiceService {
   }
 
 
-  private playSound(audio: HTMLAudioElement) {
+  private async playSound(audio: HTMLAudioElement) {
+    if (!this.domReady) {
+      await new Promise<void>(resolve => {
+        document.addEventListener('DOMContentLoaded', () => resolve(), { once: true });
+      });
+      this.domReady = true;
+      this.initializeSounds(); // Assicuriamoci che venga chiamato una sola volta
+    }
+  
     audio.currentTime = 0;
     audio.play();
   }
+  
 
   stopLoopMain() {
     this.loopMain.pause();
