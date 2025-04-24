@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
@@ -30,6 +31,10 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("connected to mongo")
+	app.Use(func(ctx iris.Context) {
+		log.Printf("Request received at: %s", time.Now().Format(time.RFC3339))
+		ctx.Next()
+	})
 	app.WrapRouter(corsHandler)
 	api := app.Party("/api")
 
@@ -45,7 +50,7 @@ func main() {
 	api.Get("/getPlayerGamesByName/{player}/{limit}/{index}", getPlayerGamesByName)
 	api.Get("/getPlayerStats/{player}", getPlayerStats)
 
-	app.Listen("0.0.0.0:8080")
+	app.Listen("0.0.0.0:3030")
 }
 
 func AuthInterceptor(ctx iris.Context) {
