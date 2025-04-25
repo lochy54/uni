@@ -26,7 +26,7 @@ export class BleServiceService {
 
   private async _connect(): Promise<void> {
     if (!navigator.bluetooth) {
-      throw new Error('Not supported on IOS');
+      throw new Error('Device or browser does not support web bluetooth');
     }
     try {
       const device = await navigator.bluetooth.requestDevice({
