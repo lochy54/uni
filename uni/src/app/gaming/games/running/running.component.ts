@@ -19,7 +19,6 @@ import { game } from '../../../../service/api-service.service';
 import { Sprite } from '../sprite';
 import { Background } from '../backgorund';
 
-
 @Component({
   selector: 'app-running',
   imports: [GameOverComponent, ScoreComponent],
@@ -75,65 +74,77 @@ export class SpaceComponent {
 
   ngAfterViewInit(): void {
     this.setupCanvas();
-  
+
     const pgrun = new Image();
     const pgfly = new Image();
     const background = new Image();
     const ratImg = new Image();
     const batImg = new Image();
-    const plat = new Image()
-    const loadImage = (img: HTMLImageElement, src: string): Promise<HTMLImageElement> => {
+    const plat = new Image();
+    const loadImage = (
+      img: HTMLImageElement,
+      src: string
+    ): Promise<HTMLImageElement> => {
       return new Promise((resolve, reject) => {
         img.src = src;
         img.onload = () => resolve(img);
         img.onerror = () => reject(`Errore nel caricamento di ${src}`);
       });
     };
-  
+
     Promise.all([
       loadImage(pgrun, './game-stuf/pigeon_walking-Sheet.png'),
       loadImage(pgfly, './game-stuf/pigeon_fiy-Sheet.png'),
       loadImage(background, '/game-stuf/city2.png'),
       loadImage(ratImg, './game-stuf/Slime_Spiked_Idle.png'),
       loadImage(batImg, './game-stuf/Bat_Fly.png'),
-      loadImage(plat , './game-stuf/ground.png')
-      
+      loadImage(plat, './game-stuf/ground.png'),
+    ]).then(
+      ([
+        loadedPgrun,
+        loadedPgfly,
+        loadedBackground,
+        loadedRat,
+        loadedBat,
+        loadedPlat,
+      ]) => {
+        this.ratImg.src = loadedRat.src;
+        this.batImg.src = loadedBat.src;
 
-    ])
-    .then(([loadedPgrun, loadedPgfly, loadedBackground, loadedRat, loadedBat,loadedPlat]) => {
-      this.ratImg.src = loadedRat.src;
-      this.batImg.src = loadedBat.src;
-  
-      this.bird = new Sprite(
-        this.canvas.nativeElement,
-        "circle",
-        this.canvas.nativeElement.width / 10,
-        this.canvas.nativeElement.height / 1.6,
-        {
-          frameIndex: 0,
-          totalFrames: 4,
-          height: 32,
-          width: 32,
-          image: loadedPgrun
-        },
-        {
-          frameIndex: 0,
-          totalFrames: 7,
-          height: 32,
-          width: 32,
-          image: loadedPgfly
-        }
-      );
-  
-      this.back = new Background(loadedBackground, this.canvas.nativeElement);
-      this.plat = new Background(loadedPlat,this.canvas.nativeElement,(this.canvas.nativeElement.height/1.6)+this.canvas.nativeElement.width / 10)
+        this.bird = new Sprite(
+          this.canvas.nativeElement,
+          'circle',
+          this.canvas.nativeElement.width / 10,
+          this.canvas.nativeElement.height / 1.6,
+          {
+            frameIndex: 0,
+            totalFrames: 4,
+            height: 32,
+            width: 32,
+            image: loadedPgrun,
+          },
+          {
+            frameIndex: 0,
+            totalFrames: 7,
+            height: 32,
+            width: 32,
+            image: loadedPgfly,
+          }
+        );
 
-    })
+        this.back = new Background(loadedBackground, this.canvas.nativeElement);
+        this.plat = new Background(
+          loadedPlat,
+          this.canvas.nativeElement,
+          this.canvas.nativeElement.height / 1.6 +
+            this.canvas.nativeElement.width / 10
+        );
+      }
+    );
   }
-  
 
   private loadElement() {
-    this.bird.reset()
+    this.bird.reset();
     this.enemy = [];
   }
 
@@ -170,15 +181,15 @@ export class SpaceComponent {
 
     const enemy: Sprite = new Sprite(
       canvas,
-      "circle",
-       canvas.width,
+      'circle',
+      canvas.width,
       useBat ? canvas.height / 2.8 : canvas.height / 1.55,
       {
-        frameIndex:0,
+        frameIndex: 0,
         width: useBat ? 32 : 20,
-        height:  useBat ? 32 : 18,
-        image : useBat ? this.batImg : this.ratImg,
-        totalFrames:4
+        height: useBat ? 32 : 18,
+        image: useBat ? this.batImg : this.ratImg,
+        totalFrames: 4,
       }
     );
 
@@ -202,47 +213,45 @@ export class SpaceComponent {
         this.soundService.stopLoopGame();
         this.soundService.playDieSound();
         return;
-      }else{
-        val.update(Date.now(), -this.difficulty(), 0)
+      } else {
+        val.update(Date.now(), -this.difficulty(), 0);
       }
     });
 
-    if (this.pressure()! >= this.pression()! && !this.fly && !this.falling) {
+    const now = Date.now();
+    const elapsed = now - this.startDate;
+
+    if (this.pressure()! <= this.pression()! && !this.fly && !this.falling) {
       this.fly = true;
       this.soundService.playJumpSound();
       this.timeoutId = setTimeout(() => {
         this.fly = false;
-      }, Math.floor(2500 / this.difficulty()));
-    } else {
+        this.falling = true;
+      }, Math.floor(3000 / this.difficulty()));
+    } else if (this.pressure()! >= this.pression()!) {
       this.fly = false;
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId);
-        this.timeoutId = null;
-      }
+      this.falling = true;
+    }
+    if (!this.fly && this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
 
     const birdY = this.bird.getPos.y;
+    const canvasHeight = this.canvas.nativeElement.height;
+
     if (this.fly) {
-      this.bird.update(Date.now() - this.startDate, 0, -this.difficulty());
-      this.falling = true;
+      this.bird.update(elapsed, 0, -this.difficulty());
     } else if (this.falling) {
-      if (birdY < canvas.height / 1.8) {
-        this.bird.update(
-          Date.now() - this.startDate,
-          0,
-          +this.difficulty()
-        );
+      if (birdY < canvasHeight / 1.6) {
+        this.bird.update(elapsed, 0, +this.difficulty());
       } else {
-        // Atterraggio
         this.falling = false;
-        this.bird.update(Date.now() - this.startDate, 0, 0);
+        this.bird.update(elapsed, 0, 0);
       }
     } else {
-      // Se a terra e non in volo
-      this.bird.update(Date.now() - this.startDate, 0, 0);
+      this.bird.update(elapsed, 0, 0);
     }
-
-    // Nemici
     if (!this.enemy.some((p) => p.getPos.x > canvas.width - p.getV().w * 4)) {
       this.drowEnemy();
     }
@@ -256,11 +265,10 @@ export class SpaceComponent {
       this.canvas.nativeElement.width,
       this.canvas.nativeElement.height
     );
-    this.bird.currentFrame = ((this.fly || this.falling) ? 1 : 0)
+    this.bird.currentFrame = this.fly || this.falling ? 1 : 0;
     this.back.draw();
     this.bird.draw();
-    this.plat.draw(); 
+    this.plat.draw();
     this.enemy.forEach((val) => val.draw());
   }
-
 }

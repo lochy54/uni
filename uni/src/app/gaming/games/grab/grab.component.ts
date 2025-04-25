@@ -56,8 +56,8 @@ export class GrabComponent {
   private items: Food[] = [];
 
 
-  private run = false
-
+  private run = true
+  private lastRun = true 
   constructor() {
     effect(() => {
       if (this.pause() || this.gameOver()) {
@@ -180,7 +180,10 @@ export class GrabComponent {
 
   private update() {
     this.run = this.pressure()! >= this.pression()!
-
+    if(this.run!=this.lastRun){
+      this.soundService.playJumpSound()
+      this.lastRun=this.run
+    }
     const canvas = this.canvas.nativeElement
     this.items.forEach(f => {
      if( f.element.collisionCheck(this.bird)){
