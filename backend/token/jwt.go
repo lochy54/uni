@@ -3,6 +3,7 @@ package token
 import (
 	"fmt"
 	"time"
+
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -26,13 +27,13 @@ func GenerateJWT(username string) (error, string) {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		return  fmt.Errorf("tostring error") , ""
+		return fmt.Errorf("tostring error"), ""
 	}
 
-	return nil ,tokenString 
+	return nil, tokenString
 }
 
-func ValidateJWT(tokenString string) (error,string) {
+func ValidateJWT(tokenString string) (error, string) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -41,12 +42,12 @@ func ValidateJWT(tokenString string) (error,string) {
 	})
 
 	if err != nil {
-		return err , ""
+		return err, ""
 	}
 	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
-		return  fmt.Errorf("invalid token") , ""
+		return fmt.Errorf("invalid token"), ""
 	}
 
-	return nil , claims.Username 
+	return nil, claims.Username
 }
