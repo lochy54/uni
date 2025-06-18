@@ -12,7 +12,7 @@ type User struct {
 	Password string `json:"password" bson:"password" validate:"required,min=6"`
 }
 
-type Game struct {
+type Game struct {	
 	Pression float64 `json:"pression" bson:"pression"`
 	Timestap int     `json:"timestap" bson:"timestap"`
 }

@@ -12,19 +12,19 @@ type timers struct {
 	username string
 }
 
-type Token struct{
+type Tokens struct{
 	codes map[string]timers
 }
 
 
-func CreateMaps() *Token {
-	return &Token{
+func CreateMaps() *Tokens {
+	return &Tokens{
 		codes: make(map[string]timers),
 	}
 }
 
 
-func (m *Token) IsCodeActive(c string) error {
+func (m *Tokens) IsCodeActive(c string) error {
 	if _, exists := m.codes[c]; exists {
 		return   nil
 	}
@@ -32,7 +32,7 @@ func (m *Token) IsCodeActive(c string) error {
 }
 
 
-func (m *Token) GenerateCode(username string) string {
+func (m *Tokens) GenerateCode(username string) string {
 
 	for k, v := range m.codes {
 		if(v.username==username){
@@ -50,7 +50,7 @@ func (m *Token) GenerateCode(username string) string {
 }
 
 
-func (m *Token) Check() {
+func (m *Tokens) Check() {
 	go func() {
 		for {
 			expiration := time.Now().Add(-1 * time.Hour)

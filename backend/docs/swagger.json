@@ -1,0 +1,232 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "UniGame API",
+    "version": "1.0.0",
+    "description": "API for UniGame backend"
+  },
+  "host": "localhost:3030",
+  "basePath": "/api",
+  "schemes": ["http"],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { "$ref": "#/definitions/Login" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "JWT token" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Register",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "JWT token" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/chekCode": {
+      "post": {
+        "summary": "Check code",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid code" }
+        }
+      }
+    },
+    "/saveSens/{player}": {
+      "post": {
+        "summary": "Save sensor data",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Game" }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/chekToken": {
+      "get": {
+        "summary": "Check token",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "User" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/generate": {
+      "get": {
+        "summary": "Generate code",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Code" }
+        }
+      }
+    },
+    "/getPlayerNames/{limit}/{index}": {
+      "get": {
+        "summary": "Get player names",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          { "name": "index", "in": "path", "required": true, "type": "integer" }
+        ],
+        "responses": {
+          "200": { "description": "Player names" }
+        }
+      }
+    },
+    "/getPlayerNames/{limit}/{index}/{filter}": {
+      "get": {
+        "summary": "Get player names with filter",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          { "name": "filter", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Player names" }
+        }
+      }
+    },
+    "/getPlayerGamesByName/{player}/{limit}/{index}": {
+      "get": {
+        "summary": "Get player games by name",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          { "name": "index", "in": "path", "required": true, "type": "integer" }
+        ],
+        "responses": {
+          "200": { "description": "Games" }
+        }
+      }
+    },
+    "/getPlayerStats/{player}": {
+      "get": {
+        "summary": "Get player stats",
+        "parameters": [
+          { "name": "player", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player stats",
+            "schema": { "$ref": "#/definitions/PlayerStats" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "surname": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    },
+    "Game": {
+      "type": "object",
+      "properties": {
+        "pression": { "type": "number" },
+        "timestap": { "type": "integer" }
+      }
+    },
+    "PlayerStats": {
+      "type": "object",
+      "properties": {
+        "maxPressure": { "type": "number" },
+        "maxPressureDuration": { "type": "integer" },
+        "maxPressureLast": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "totalGames": { "type": "integer" }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Bearer {token}"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

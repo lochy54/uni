@@ -7,6 +7,8 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
+	httpSwagger "github.com/swaggo/http-swagger"
+	_ "progettoUni.com/docs"
 	"progettoUni.com/models"
 	"progettoUni.com/mongo"
 	"progettoUni.com/token"
@@ -37,6 +39,7 @@ func main() {
 	})
 	app.WrapRouter(corsHandler)
 	api := app.Party("/api")
+	api.Get("/swagger/{any:path}", iris.FromStd(httpSwagger.WrapHandler))
 
 	api.Post("/login", login)
 	api.Post("/register", register)
