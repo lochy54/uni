@@ -18,8 +18,8 @@ const int servoPin = 9;      // Pin a cui è connesso il servo (pin 9)
 const int sensorPin = A6;    // Pin per il sensore ACS712 (pin analogico A6)
 const float sensitivity = 0.185;  // Sensibilità del sensore ACS712 (mV/A)
 const float offset = 2.5;    // Offset del sensore ACS712 (in V)
-const float STALL_CURRENT =  0.24;       // Ampere, MG995 at 3.3 volt
-const float STALL_TORQUE  = 6.88;      // kg·cm, MG995 at 3.3 volt
+const float STALL_CURRENT =  0.24;       // Ampere, MG995 at 3.5 volt
+const float STALL_TORQUE  = 6.88;      // kg·cm, MG995 at 3.5 volt
 // Variabile globale per la connessione BLE
 bool connected = false;
 
